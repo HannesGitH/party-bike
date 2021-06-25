@@ -6,4 +6,8 @@
     "idf.customExtraVars": "{\"OPENOCD_SCRIPTS\":\"C:\\\\Users\\\\hanne\\\\.espressif\\\\tools\\\\openocd-esp32\\\\v0.10.0-esp32-20210401/openocd-esp32/share/openocd/scripts\",\"IDF_CCACHE_ENABLE\":\"1\"}",
     "idf.portWin": "COM5",
     "idf.flashType": "UART",
+    "files.associations": {
+        "task.h": "c",
+        "gpio.h": "c"
+    },
 }

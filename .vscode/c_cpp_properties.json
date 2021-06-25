@@ -1,9 +1,13 @@
 {
+    "env": {
+        "idf-components": ["D:/stuff/esp/esp-idf/components"]
+    },
     "configurations": [
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${idf-components}/**"
             ],
             "defines": [
                 "_DEBUG",
