@@ -1,4 +1,4 @@
 idf_component_register(
-    SRCS "main.c" "main.cpp"
+    SRCS "ws2812.cpp"  "main.cpp"
     INCLUDE_DIRS "."
 )
