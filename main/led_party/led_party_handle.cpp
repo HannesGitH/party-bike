@@ -9,10 +9,8 @@
 
 void led_party_task(void *arg){
 
-    printf("party may start");
     Led_party_man partyman = Led_party_man(DATA_PIN,LED_STRIP_LENGTH, HIGH_V_PIN);
 
-    printf(", yes\n");
     while (1)
     {
         partyman.set_color(3,{

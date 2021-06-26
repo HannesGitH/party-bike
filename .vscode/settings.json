@@ -8,6 +8,7 @@
     "idf.flashType": "UART",
     "files.associations": {
         "task.h": "c",
-        "gpio.h": "c"
+        "gpio.h": "c",
+        "string_view": "cpp"
     },
 }
