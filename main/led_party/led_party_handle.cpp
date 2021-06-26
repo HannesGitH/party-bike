@@ -9,22 +9,14 @@
 void walk_pixel(Led_party_man* partyman){
     for (int i = 0; i < LED_STRIP_LENGTH; i++)
         {
-            led_color_t rgb = {
-                .red = (uint8_t)(i*20),
-                .green = 2,
-                .blue = 3
-            };
+            irgb_t rgb = iRGB(255,80,i*5);
             partyman->set_color(i,rgb);
         }
     while (1)
     {
         for (int i = 0; i < LED_STRIP_LENGTH; i++)
         {
-            partyman->change_color(i,{
-                .red = 1,
-                .green = 2,
-                .blue = 3
-            });
+            partyman->change_color(i,iRGB(1,2,3));
         }
         vTaskDelay(50/portTICK_PERIOD_MS);
         partyman->update();

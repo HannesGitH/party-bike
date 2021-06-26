@@ -14,11 +14,10 @@ class Led_party_man
 {
 private:
     xSemaphoreHandle sema;
-    struct led_color_t *led_strip_buf_1;
-    struct led_color_t *led_strip_buf_2;
+    irgb_t *led_strip_buf_1;
     struct led_strip_t led_strip;
     
-    led_color_t * temporary_pixel;
+    irgb_t * temporary_pixel;
     
 public:
     Led_party_man(gpio_num_t strip_data_pin, uint length, gpio_num_t high_v_pin);
@@ -26,9 +25,9 @@ public:
 
     void update();
     void reset();
-    void set_color(uint32_t index, led_color_t RGB);
-    led_color_t get_color(uint32_t index);
-    void change_color(uint32_t index, led_color_t RGB);
+    void set_color(uint32_t index, irgb_t iRGB);
+    irgb_t get_color(uint32_t index);
+    void change_color(uint32_t index, irgb_t iRGB);
 };
 
 #endif

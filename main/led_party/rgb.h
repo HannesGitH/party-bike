@@ -10,6 +10,14 @@ extern "C" {
 /**
  * RGB LED colors
  */
+typedef uint32_t irgb_t;
+
+irgb_t iRGB
+(
+    uint8_t R,
+    uint8_t G,
+    uint8_t B
+);
 struct led_color_t {
     uint8_t red;
     uint8_t green;

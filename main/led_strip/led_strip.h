@@ -23,16 +23,7 @@ extern "C" {
 
 #include <stddef.h>
 
-enum rgb_led_type_t {
-    RGB_LED_TYPE_WS2812 = 0,
-    RGB_LED_TYPE_SK6812 = 1,
-    RGB_LED_TYPE_APA106 = 2,
-
-    RGB_LED_TYPE_MAX,
-};
-
 struct led_strip_t {
-    enum rgb_led_type_t rgb_led_type;
     uint32_t led_strip_length;
 
     gpio_num_t gpio; // Must be less than GPIO_NUM_33
@@ -49,10 +40,7 @@ struct led_strip_t {
      */
     int rmt_interrupt_num;
 
-    // Double buffering elements
-    bool showing_buf_1;
-    struct led_color_t *led_strip_buf_1;
-    struct led_color_t *led_strip_buf_2; 
+    irgb_t * led_strip_buf_1;
 
     xSemaphoreHandle access_semaphore;
 };
@@ -62,7 +50,7 @@ bool led_strip_init(struct led_strip_t *led_strip);
 /**
  * Sets the pixel at pixel_num to color.
  */
-bool led_strip_set_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num, struct led_color_t *color);
+bool led_strip_set_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num, irgb_t color);
 bool led_strip_set_pixel_rgb(struct led_strip_t *led_strip, uint32_t pixel_num, uint8_t red, uint8_t green, uint8_t blue);
 /**
  * Get the pixel color at pixel_num for the led strip that is currently being shown! 
@@ -72,12 +60,8 @@ bool led_strip_set_pixel_rgb(struct led_strip_t *led_strip, uint32_t pixel_num, 
  *
  * If there is an invalid argument, color will point to NULL and this function will return false.
  */
-bool led_strip_get_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num, struct led_color_t *color);
+bool led_strip_get_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num, irgb_t *color);
 
-/**
- * Updates the led buffer to be shown using double buffering.
- */
-bool led_strip_show(struct led_strip_t *led_strip);
 
 /**
  * Clears the LED strip.
