@@ -26,21 +26,27 @@ void Ws2812::setLEDs(irgb_t data[], uint length){
 }
 
 void Ws2812::update(){
+    uint64_t m_start = 0;
+    uint64_t m_end = 0;
+    //timer_get_counter_value(TGROUP,TTIMER,&m_start);
+    uint64_t ticks = 0;
     uint64_t start = 0;
-    uint64_t end = 0;
-    //timer_get_counter_value(TGROUP,TTIMER,&start);
     for (int i = 0; i < _length; ++i) {
         irgb_t IRGB = _data[i];
         uint32_t IGRB = (IRGB & 0x0000FF00) | (IRGB & 0x00FF0000) | (IRGB & 0x000000FF);
         for (uint8_t bit_index=0; bit_index<24; ++bit_index){
             bool bit = (IGRB & 0x800000)!=0;
             
-            timer_get_counter_value(TGROUP,TTIMER,&start);
-            for (uint16_t i = 0; i < 1000; i++)
-            {
-                _d.delay_50ns(0);
-            }
-            timer_get_counter_value(TGROUP,TTIMER,&end);
+            timer_get_counter_value(TGROUP,TTIMER,&m_start);
+            //for (uint16_t i = 0; i < 1000; i++)
+            //{
+                
+                timer_get_counter_value(TGROUP,TTIMER,&start);
+                while (ticks - start < 1) {
+                    timer_get_counter_value(TGROUP,TTIMER,&ticks);
+                }
+            //}
+            timer_get_counter_value(TGROUP,TTIMER,&m_end);
             gpio_set_level(_data_pin, 1);
             _d.delay_50ns(8*(bit + 1));
             gpio_set_level(_data_pin, 1);
@@ -48,7 +54,7 @@ void Ws2812::update(){
         }
     }
     //timer_get_counter_value(TGROUP,TTIMER,&end);
-    printf("measurement took %llu 40Mhz cycles",(end-start)/1000);
+    printf("measurement took %llu 40Mhz cycles",(m_end-m_start));///1000);
     _d.delay_50ns(1001);
 }
 
