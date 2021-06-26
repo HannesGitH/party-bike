@@ -19,13 +19,18 @@
 */
 #define BLINK_GPIO GPIO_NUM_13
 
-
-
 #define DATA_PIN GPIO_NUM_12
 
 
 void init_stuff(){
+    uint strip_length = 14;
     Ws2812 ws = Ws2812(DATA_PIN);
+    irgb_t RGBs[strip_length]{0};
+    for(int i=0; i<strip_length;++i){
+        RGBs[i]=iRGB(255,17,123);
+    }
+    ws.setLEDs(RGBs,strip_length);
+    ws.update();
 }
 
 extern "C"{
@@ -40,6 +45,7 @@ void app_main(void)
         /* Blink off (output low) */
         printf("Turning off the LED\n");
         gpio_set_level(BLINK_GPIO, 0);
+        //Delayer::get().delay_50ns(20000000);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
         /* Blink on (output high) */
         printf("Turning on the LED\n");
