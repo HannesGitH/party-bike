@@ -35,20 +35,19 @@ Led_party_man::~Led_party_man()
 void Led_party_man::update(){
     led_strip_show(&led_strip);
 }
-void Led_party_man::update(){
+void Led_party_man::reset(){
     led_strip_clear(&led_strip);
 }
 
 void Led_party_man::set_color(uint32_t index, led_color_t RGB){
-    led_strip_set_pixel_color(&led_strip,index, &RGB);
-    update();
+    printf("struct at address %d\n",(int)&RGB);
+    led_strip_set_pixel_rgb(&led_strip,index, RGB.red,RGB.green,RGB.blue);
 }
 led_color_t Led_party_man::get_color(uint32_t index){
     led_strip_get_pixel_color(&led_strip,index, temporary_pixel);
     return *temporary_pixel;
 }
 void Led_party_man::change_color(uint32_t index, led_color_t RGB){
-    *temporary_pixel = add_colors(get_color(index),RGB);
-    led_strip_set_pixel_color(&led_strip,index, temporary_pixel);
-    update();
+    RGB = add_colors(get_color(index),RGB);
+    set_color(index, RGB);
 }
