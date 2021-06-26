@@ -20,7 +20,7 @@
 
 #include <string.h>
 
-#define LED_STRIP_TASK_SIZE             (2048)
+#define LED_STRIP_TASK_SIZE             (512)
 #define LED_STRIP_TASK_PRIORITY         (configMAX_PRIORITIES - 1)
 
 #define LED_STRIP_REFRESH_PERIOD_MS     (30U) // TODO: add as parameter to led_strip_init
@@ -205,9 +205,7 @@ static void led_strip_fill_rmt_items_apa106(struct led_color_t *led_strip_buf, r
 
 static void led_strip_task(void *arg)
 {
-    printf("running da task\n");
     struct led_strip_t *led_strip = (struct led_strip_t *)arg;
-    printf("%d\n",led_strip->rmt_channel);
     led_fill_rmt_items_fn led_make_waveform = NULL;
     bool make_new_rmt_items = true;
     bool prev_showing_buf_1 = !led_strip->showing_buf_1;
@@ -236,9 +234,7 @@ static void led_strip_task(void *arg)
             led_make_waveform = led_strip_fill_rmt_items_ws2812;
             break;
     };
-    printf("%d\n",led_strip->rmt_channel);
     for(;;) {
-        printf("still %d\n",led_strip->rmt_channel);
         rmt_wait_tx_done(led_strip->rmt_channel, portMAX_DELAY);
         xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
 

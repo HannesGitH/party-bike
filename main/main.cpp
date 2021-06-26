@@ -11,72 +11,49 @@
 #include "freertos/task.h"
 #include "driver/gpio.h"
 #include "sdkconfig.h"
-#include "freertos/semphr.h"
-#include "led_strip.h"
+#include "led_party/led_party_handle.hpp"
 
 
-/* Can use project configuration menu (idf.py menuconfig) to choose the GPIO to blink,
-   or you can edit the following line and set a number here.
-*/
-#define BLINK_GPIO GPIO_NUM_13
+TaskHandle_t led_party_task_handle;
 
-#define DATA_PIN GPIO_NUM_12
-
-
-#define LED_STRIP_LENGTH 14U
-#define LED_STRIP_RMT_INTR_NUM 19U
-
-
-static struct led_color_t led_strip_buf_1[LED_STRIP_LENGTH];
-static struct led_color_t led_strip_buf_2[LED_STRIP_LENGTH];
-
-xSemaphoreHandle sema = xSemaphoreCreateBinary();
+extern void led_party_task(void *arg);
 
 void init_stuff(){
-    printf("initializing.");
-    static struct led_strip_t led_strip = {
-        .rgb_led_type = RGB_LED_TYPE_WS2812,
-        .led_strip_length = LED_STRIP_LENGTH,
-        .gpio = DATA_PIN,
+    printf("initializing..\n");
 
-        .rmt_channel = RMT_CHANNEL_3,
-        .rmt_interrupt_num = LED_STRIP_RMT_INTR_NUM,
-        .showing_buf_1 = true,
-        .led_strip_buf_1 = led_strip_buf_1,
-        .led_strip_buf_2 = led_strip_buf_2,
-        .access_semaphore = sema
-    };
-    printf(".");
-    bool led_init_ok = led_strip_init(&led_strip);
-    if (led_init_ok){
-        printf("\nled strip initialized\n");
+    if( 
+        !xTaskCreate(
+            led_party_task,         //task to run
+            "led_party_task",       //name of task
+            1024,                   //stack size
+            NULL,                   //arg pointer
+            configMAX_PRIORITIES-5, //interrupt prio
+            &led_party_task_handle  //handle (to kill task)
+        )
+    ){
+        printf("party thread couldnt be started :(\n");
     }
-    printf("setting pixel\n");
-    led_strip_set_pixel_rgb(&led_strip,3,250,0,120);
-    printf("showing pixel\n");
-    led_strip_show(&led_strip);
-    printf("%d\n",(&led_strip)->rmt_channel);
-    printf("init done\n");
+    
 }
 
+
+#define BLINK_GPIO GPIO_NUM_2 //onboard_led
 extern "C"{
+
+//entry
 void app_main(void)
 {
     init_stuff();
 
-    gpio_reset_pin(BLINK_GPIO);
-    /* Set the GPIO as a push/pull output */
-    gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
-    while(1) {
-        /* Blink off (output low) */
-        printf("Turning off the LED\n");
-        gpio_set_level(BLINK_GPIO, 0);
-        //Delayer::get().delay_50ns(20000000);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-        /* Blink on (output high) */
-        printf("Turning on the LED\n");
-        gpio_set_level(BLINK_GPIO, 1);
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
+    //blink led to show its running
+        gpio_reset_pin(BLINK_GPIO);
+        gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
+
+        while(1) {
+            gpio_set_level(BLINK_GPIO, 0);
+            vTaskDelay(500 / portTICK_PERIOD_MS);
+            gpio_set_level(BLINK_GPIO, 1);
+            vTaskDelay(500 / portTICK_PERIOD_MS);
+        }
 }
 }
