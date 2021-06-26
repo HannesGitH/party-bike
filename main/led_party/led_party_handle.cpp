@@ -21,12 +21,11 @@ void walk_pixel(Led_party_man* partyman){
                 .green = 5,
                 .blue = 1
             });
-            partyman->set_color((i-2)%LED_STRIP_LENGTH,{
+            partyman->change_color(5,{
                 .red = 55,
                 .green = 5,
-                .blue = 1
+                .blue = 10
             });
-            partyman->update();
             vTaskDelay(500 / portTICK_PERIOD_MS);
         }
     }

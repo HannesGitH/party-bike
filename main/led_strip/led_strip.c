@@ -416,10 +416,12 @@ bool led_strip_show(struct led_strip_t *led_strip)
     xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
     if (led_strip->showing_buf_1) {
         led_strip->showing_buf_1 = false;
-        memset(led_strip->led_strip_buf_1, 0, sizeof(struct led_color_t) * led_strip->led_strip_length);
+        //memset(led_strip->led_strip_buf_1, 0, sizeof(struct led_color_t) * led_strip->led_strip_length);
+        memccpy(led_strip->led_strip_buf_1,led_strip->led_strip_buf_2, 0, sizeof(struct led_color_t) * led_strip->led_strip_length);
     } else {
         led_strip->showing_buf_1 = true;
-        memset(led_strip->led_strip_buf_2, 0, sizeof(struct led_color_t) * led_strip->led_strip_length);
+        //memset(led_strip->led_strip_buf_2, 0, sizeof(struct led_color_t) * led_strip->led_strip_length);
+        memccpy(led_strip->led_strip_buf_2,led_strip->led_strip_buf_1, 0, sizeof(struct led_color_t) * led_strip->led_strip_length);
     }
     xSemaphoreGive(led_strip->access_semaphore);
 

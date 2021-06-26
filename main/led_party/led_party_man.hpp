@@ -25,6 +25,7 @@ public:
     ~Led_party_man();
 
     void update();
+    void reset();
     void set_color(uint32_t index, led_color_t RGB);
     led_color_t get_color(uint32_t index);
     void change_color(uint32_t index, led_color_t RGB);

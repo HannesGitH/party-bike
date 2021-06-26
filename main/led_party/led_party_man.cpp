@@ -24,6 +24,7 @@ Led_party_man::Led_party_man(gpio_num_t strip_data_pin, uint length, gpio_num_t 
         printf("\nled strip initialized\n");
     }
     led_strip_show(&led_strip);
+    *temporary_pixel={.red=0,.green=0,.blue=0};
     return;
 }
 
@@ -34,9 +35,13 @@ Led_party_man::~Led_party_man()
 void Led_party_man::update(){
     led_strip_show(&led_strip);
 }
+void Led_party_man::update(){
+    led_strip_clear(&led_strip);
+}
 
 void Led_party_man::set_color(uint32_t index, led_color_t RGB){
     led_strip_set_pixel_color(&led_strip,index, &RGB);
+    update();
 }
 led_color_t Led_party_man::get_color(uint32_t index){
     led_strip_get_pixel_color(&led_strip,index, temporary_pixel);
@@ -45,4 +50,5 @@ led_color_t Led_party_man::get_color(uint32_t index){
 void Led_party_man::change_color(uint32_t index, led_color_t RGB){
     *temporary_pixel = add_colors(get_color(index),RGB);
     led_strip_set_pixel_color(&led_strip,index, temporary_pixel);
+    update();
 }
