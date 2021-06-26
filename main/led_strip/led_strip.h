@@ -19,6 +19,7 @@ extern "C" {
 #include <driver/gpio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
+#include "../led_party/rgb.h"
 
 #include <stddef.h>
 
@@ -30,18 +31,9 @@ enum rgb_led_type_t {
     RGB_LED_TYPE_MAX,
 };
 
-/**
- * RGB LED colors
- */
-struct led_color_t {
-    uint8_t red;
-    uint8_t green;
-    uint8_t blue;
-};
-
 struct led_strip_t {
-    const enum rgb_led_type_t rgb_led_type;
-    const uint32_t led_strip_length;
+    enum rgb_led_type_t rgb_led_type;
+    uint32_t led_strip_length;
 
     gpio_num_t gpio; // Must be less than GPIO_NUM_33
 

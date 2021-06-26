@@ -305,8 +305,11 @@ static bool led_strip_init_rmt(struct led_strip_t *led_strip)
 
 bool led_strip_init(struct led_strip_t *led_strip)
 {
+    printf("dow0\n");
     TaskHandle_t led_strip_task_handle;
-
+    
+    printf("address is %d, and its buffer at %d has too green\n",(int) led_strip, &(led_strip->led_strip_buf_1));//, (int)**(led_strip->led_strip_buf_1->green));
+    
     if ((led_strip == NULL) ||
         (led_strip->rmt_channel == RMT_CHANNEL_MAX) ||
         (led_strip->gpio > GPIO_NUM_33) ||  // only inputs above 33
@@ -317,18 +320,21 @@ bool led_strip_init(struct led_strip_t *led_strip)
         return false;
     }
 
+    printf("dow1\n");
     if(led_strip->led_strip_buf_1 == led_strip->led_strip_buf_2) {
         return false;
     }
 
+    printf("dow2\n");
     memset(led_strip->led_strip_buf_1, 0, sizeof(struct led_color_t) * led_strip->led_strip_length);
     memset(led_strip->led_strip_buf_2, 0, sizeof(struct led_color_t) * led_strip->led_strip_length);
 
+    printf("dow3\n");
     bool init_rmt = led_strip_init_rmt(led_strip);
     if (!init_rmt) {
         return false;
     }
-
+    printf("dow4\n");
     xSemaphoreGive(led_strip->access_semaphore);
     BaseType_t task_created = xTaskCreate(led_strip_task,
                                             "led_strip_task",
@@ -338,6 +344,7 @@ bool led_strip_init(struct led_strip_t *led_strip)
                                             &led_strip_task_handle
                                          );
 
+    printf("dow5\n");
     if (!task_created) {
         return false;
     }

@@ -22,15 +22,17 @@ void init_stuff(){
     printf("initializing..\n");
 
     if( 
-        !xTaskCreate(
+        xTaskCreate(
             led_party_task,         //task to run
             "led_party_task",       //name of task
-            1024,                   //stack size
+            2048,                   //stack size
             NULL,                   //arg pointer
             configMAX_PRIORITIES-5, //interrupt prio
             &led_party_task_handle  //handle (to kill task)
         )
     ){
+        printf("PARTY thread started\n");
+    }else{
         printf("party thread couldnt be started :(\n");
     }
     
