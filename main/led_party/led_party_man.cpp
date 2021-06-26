@@ -31,8 +31,18 @@ Led_party_man::~Led_party_man()
 {
 }
 
+void Led_party_man::update(){
+    led_strip_show(&led_strip);
+}
 
 void Led_party_man::set_color(uint32_t index, led_color_t RGB){
     led_strip_set_pixel_color(&led_strip,index, &RGB);
-    led_strip_show(&led_strip);
+}
+led_color_t Led_party_man::get_color(uint32_t index){
+    led_strip_get_pixel_color(&led_strip,index, temporary_pixel);
+    return *temporary_pixel;
+}
+void Led_party_man::change_color(uint32_t index, led_color_t RGB){
+    *temporary_pixel = add_colors(get_color(index),RGB);
+    led_strip_set_pixel_color(&led_strip,index, temporary_pixel);
 }
