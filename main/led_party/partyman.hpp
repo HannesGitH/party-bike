@@ -10,16 +10,16 @@
 #ifndef PARTYMAN_H
 #define PARTYMAN_H
 
-#define DATA_PIN_DIAG GPIO_NUM_12 //diagonal
-#define LENGTH_DIAG_L 15U
-#define LENGTH_DIAG_R 15U
-#define LENGTH_DIAG (LENGTH_DIAG_L+LENGTH_DIAG_L)
-
 #define DATA_PIN_MAIN GPIO_NUM_13 //main60 //draws way to much power so esp overheats and crashes usb connection
 #define LENGTH_MAIN_L 30U
 #define LENGTH_MAIN_R 30U
 #define LENGTH_REAR_T 4U
 #define LENGTH_MAIN (LENGTH_MAIN_L+LENGTH_MAIN_L+LENGTH_REAR_T)
+
+#define DATA_PIN_DIAG GPIO_NUM_12 //diagonal
+#define LENGTH_DIAG_L 15U
+#define LENGTH_DIAG_R 15U
+#define LENGTH_DIAG (LENGTH_DIAG_L+LENGTH_DIAG_L)
 
 #define DATA_PIN_FRNT GPIO_NUM_14 //front
 #define LENGTH_FRNT_T 4U
