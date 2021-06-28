@@ -16,11 +16,13 @@ private:
     xSemaphoreHandle sema;
     irgb_t *led_strip_buf_1;
     struct led_strip_t led_strip;
+    uint length;
     
     irgb_t * temporary_pixel;
     
 public:
-    Ws2812_controller(gpio_num_t strip_data_pin, uint length);
+    Ws2812_controller(gpio_num_t strip_data_pin, uint length, uint8_t channel);
+    Ws2812_controller();//dont use classes nitialized like this
     ~Ws2812_controller();
 
     void update();

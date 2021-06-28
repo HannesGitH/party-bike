@@ -1,16 +1,17 @@
 #include "Ws2812_controller.hpp"
 
-#define LED_STRIP_RMT_INTR_NUM 19U
-
-Ws2812_controller::Ws2812_controller(gpio_num_t strip_data_pin, uint length)
+const uint8_t LED_STRIP_RMT_INTR_NUMs[] = {9, 12, 13, 17, 18, 19, 20, 21, 23};
+Ws2812_controller::Ws2812_controller(){return;}
+Ws2812_controller::Ws2812_controller(gpio_num_t strip_data_pin, uint length, uint8_t channel)
 {
+    this->length = length;
     led_strip_buf_1 =(irgb_t *) malloc(length*sizeof(irgb_t));
     sema = xSemaphoreCreateBinary();
     led_strip = {
         .led_strip_length = length,
         .gpio = strip_data_pin,
-        .rmt_channel = RMT_CHANNEL_3,
-        .rmt_interrupt_num = LED_STRIP_RMT_INTR_NUM,
+        .rmt_channel = (rmt_channel_t) channel,
+        .rmt_interrupt_num = LED_STRIP_RMT_INTR_NUMs[channel],
         .led_strip_buf_1 = led_strip_buf_1,
         .access_semaphore = sema
     };
