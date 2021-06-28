@@ -56,7 +56,7 @@ const gpio_num_t strip_pins[] = {
 };
 
 void initialize_strips(led_strip_t * strips){
-    for(int i=0; i<amount_strips; i++){
+    for(int i=0; i<amount_strips; ++i){
         strips[i] = init_new_strip(strip_pins[i],strip_lengths[i],i);
     }
 }
@@ -86,9 +86,13 @@ effect effect_spread_pixel{
     .draw = effect_spread_pixel_draw
 };
 
+
 void led_party_task(void *arg){
 
+//apperently haben alle dieselbe adresse?
+    //led_strip_t * strips = (led_strip_t *) malloc(amount_strips*sizeof(led_strip_t));
     led_strip_t strips[amount_strips];
+
     initialize_strips(strips);
 
     
