@@ -1,8 +1,8 @@
-#include "led_party_man.hpp"
+#include "Ws2812_controller.hpp"
 
 #define LED_STRIP_RMT_INTR_NUM 19U
 
-Led_party_man::Led_party_man(gpio_num_t strip_data_pin, uint length, gpio_num_t high_v_pin)
+Ws2812_controller::Ws2812_controller(gpio_num_t strip_data_pin, uint length, gpio_num_t high_v_pin)
 {
     led_strip_buf_1 =(irgb_t *) malloc(length*sizeof(irgb_t));
     sema = xSemaphoreCreateBinary();
@@ -22,25 +22,25 @@ Led_party_man::Led_party_man(gpio_num_t strip_data_pin, uint length, gpio_num_t 
     return;
 }
 
-Led_party_man::~Led_party_man()
+Ws2812_controller::~Ws2812_controller()
 {
 }
 
-void Led_party_man::update(){
+void Ws2812_controller::update(){
     //led_strip_show(&led_strip);
 }
-void Led_party_man::reset(){
+void Ws2812_controller::reset(){
     led_strip_clear(&led_strip);
 }
 
-void Led_party_man::set_color(uint32_t index, irgb_t iRGB){
+void Ws2812_controller::set_color(uint32_t index, irgb_t iRGB){
     led_strip_set_pixel_color(&led_strip,index, iRGB);
 }
-irgb_t Led_party_man::get_color(uint32_t index){
+irgb_t Ws2812_controller::get_color(uint32_t index){
     led_strip_get_pixel_color(&led_strip,index, temporary_pixel);
     return *temporary_pixel;
 }
-void Led_party_man::change_color(uint32_t index, irgb_t iRGB){
+void Ws2812_controller::change_color(uint32_t index, irgb_t iRGB){
     iRGB += get_color(index);
     set_color(index, iRGB);
 }

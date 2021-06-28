@@ -4,7 +4,7 @@
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 #include "freertos/semphr.h"
-#include "led_party_man.hpp"
+#include "ws2812_controller.hpp"
 #include "rgb.h"
 
 #ifndef LEDPARTY_H

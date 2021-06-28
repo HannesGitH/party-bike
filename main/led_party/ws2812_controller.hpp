@@ -7,10 +7,10 @@
 #include "../led_strip/led_strip.h"
 #include "rgb.h"
 
-#ifndef LEDPARTYMAN_H
-#define LEDPARTYMAN_H
+#ifndef WS2812_H
+#define WS2812_H
 
-class Led_party_man
+class Ws2812_controller
 {
 private:
     xSemaphoreHandle sema;
@@ -20,8 +20,8 @@ private:
     irgb_t * temporary_pixel;
     
 public:
-    Led_party_man(gpio_num_t strip_data_pin, uint length, gpio_num_t high_v_pin);
-    ~Led_party_man();
+    Ws2812_controller(gpio_num_t strip_data_pin, uint length, gpio_num_t high_v_pin);
+    ~Ws2812_controller();
 
     void update();
     void reset();

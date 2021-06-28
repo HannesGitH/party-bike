@@ -38,22 +38,6 @@
 #define LED_STRIP_RMT_TICKS_BIT_0_HIGH_WS2812 3 // 300ns (350ns +/- 150ns per datasheet)
 #define LED_STRIP_RMT_TICKS_BIT_0_LOW_WS2812  9 // 900ns (900ns +/- 150ns per datasheet)
 
-/****************************
-        SK6812 Timing
- ****************************/
-#define LED_STRIP_RMT_TICKS_BIT_1_HIGH_SK6812 6
-#define LED_STRIP_RMT_TICKS_BIT_1_LOW_SK6812  6
-#define LED_STRIP_RMT_TICKS_BIT_0_HIGH_SK6812 3
-#define LED_STRIP_RMT_TICKS_BIT_0_LOW_SK6812  9
-
-/****************************
-        APA106 Timing
- ****************************/
-#define LED_STRIP_RMT_TICKS_BIT_1_HIGH_APA106 14 // 1.36us +/- 150ns per datasheet
-#define LED_STRIP_RMT_TICKS_BIT_1_LOW_APA106   3 // 350ns +/- 150ns per datasheet
-#define LED_STRIP_RMT_TICKS_BIT_0_HIGH_APA106  3 // 350ns +/- 150ns per datasheet
-#define LED_STRIP_RMT_TICKS_BIT_0_LOW_APA106  14 // 1.36us +/- 150ns per datasheet
-
 // Function pointer for generating waveforms based on different LED drivers
 typedef void (*led_fill_rmt_items_fn)(irgb_t *led_strip_buf, rmt_item32_t *rmt_items, uint32_t led_strip_length);
 
