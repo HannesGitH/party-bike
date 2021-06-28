@@ -1,9 +1,12 @@
 #include "Ws2812_controller.hpp"
 
 #define LED_STRIP_LENGTH 160U
-#define DATA_PIN GPIO_NUM_12
+#define DATA_PIN GPIO_NUM_12 //diagonal
+#define DATA_PIN GPIO_NUM_13 //main60 //draws way to much power so esp overheats and crashes usb connection
+#define DATA_PIN GPIO_NUM_14 //front
+#define DATA_PIN GPIO_NUM_27 //sattelstange
+#define DATA_PIN GPIO_NUM_23 //rear   //leider is det kabel schrotti, deshalb n anderer pin, wär eigtl 26 (todo)
 
-#define HIGH_V_PIN GPIO_NUM_13
 
 
 void chilling(Ws2812_controller* partyman){
@@ -53,8 +56,7 @@ void test(Ws2812_controller* partyman){
 
 void led_party_task(void *arg){
 
-    Ws2812_controller partyman = Ws2812_controller(DATA_PIN,LED_STRIP_LENGTH, HIGH_V_PIN);
-
+    Ws2812_controller partyman = Ws2812_controller(DATA_PIN,LED_STRIP_LENGTH);
     test(&partyman);
 }
 

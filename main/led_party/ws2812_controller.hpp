@@ -20,7 +20,7 @@ private:
     irgb_t * temporary_pixel;
     
 public:
-    Ws2812_controller(gpio_num_t strip_data_pin, uint length, gpio_num_t high_v_pin);
+    Ws2812_controller(gpio_num_t strip_data_pin, uint length);
     ~Ws2812_controller();
 
     void update();

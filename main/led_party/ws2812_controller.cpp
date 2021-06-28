@@ -2,7 +2,7 @@
 
 #define LED_STRIP_RMT_INTR_NUM 19U
 
-Ws2812_controller::Ws2812_controller(gpio_num_t strip_data_pin, uint length, gpio_num_t high_v_pin)
+Ws2812_controller::Ws2812_controller(gpio_num_t strip_data_pin, uint length)
 {
     led_strip_buf_1 =(irgb_t *) malloc(length*sizeof(irgb_t));
     sema = xSemaphoreCreateBinary();
