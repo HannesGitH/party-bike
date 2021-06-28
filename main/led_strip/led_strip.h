@@ -40,7 +40,7 @@ struct led_strip_t {
      */
     int rmt_interrupt_num;
 
-    irgb_t * led_strip_buf_1;
+    irgb_t * led_strip_buf;
 
     xSemaphoreHandle access_semaphore;
 };

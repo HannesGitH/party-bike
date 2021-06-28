@@ -1,26 +1,10 @@
-/*  ----------------------------------------------------------------------------
-    File: led_strip.c
-    Author(s):  Lucas Bruder <LBruder@me.com>
-    Date Created: 11/23/2016
-    Last modified: 11/26/2016
-
-    Description: LED Library for driving various led strips on ESP32.
-
-    This library uses double buffering to display the LEDs.
-    If the driver is showing buffer 1, any calls to led_strip_set_pixel_color
-    will write to buffer 2. When it's time to drive the pixels on the strip, it
-    refers to buffer 1. 
-    When led_strip_show is called, it will switch to displaying the pixels
-    from buffer 2 and will clear buffer 1. Any writes will now happen on buffer 1 
-    and the task will look at buffer 2 for refreshing the LEDs
-    ------------------------------------------------------------------------- */
 
 #include "led_strip.h"
 #include "freertos/task.h"
 
 #include <string.h>
 
-#define LED_STRIP_TASK_SIZE             (512)
+#define LED_STRIP_TASK_SIZE             (4096)
 #define LED_STRIP_TASK_PRIORITY         (configMAX_PRIORITIES - 1)
 
 #define LED_STRIP_REFRESH_PERIOD_MS     (30U) // TODO: add as parameter to led_strip_init
@@ -92,6 +76,8 @@ static void led_strip_task(void *arg)
     led_make_waveform = led_strip_fill_rmt_items_ws2812;
 
     for(;;) {
+        printf("strip %d's mutex is at %d \n" , (int) led_strip->rmt_channel, (int) led_strip->access_semaphore);
+        configASSERT(led_strip->access_semaphore); //todo: why the hell is this getting nulled?!
         rmt_wait_tx_done(led_strip->rmt_channel, portMAX_DELAY);
         xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
 
@@ -104,7 +90,7 @@ static void led_strip_task(void *arg)
         make_new_rmt_items = true;
 
         if (make_new_rmt_items) {
-            led_make_waveform(led_strip->led_strip_buf_1, rmt_items, led_strip->led_strip_length);
+            led_make_waveform(led_strip->led_strip_buf, rmt_items, led_strip->led_strip_length);
         }
 
         rmt_write_items(led_strip->rmt_channel, rmt_items, num_items_malloc, false);
@@ -156,13 +142,13 @@ bool led_strip_init(struct led_strip_t *led_strip)
     if ((led_strip == NULL) ||
         (led_strip->rmt_channel == RMT_CHANNEL_MAX) ||
         (led_strip->gpio > GPIO_NUM_33) ||  // only inputs above 33
-        (led_strip->led_strip_buf_1 == NULL) ||
+        (led_strip->led_strip_buf == NULL) ||
         (led_strip->led_strip_length == 0) ||
         (led_strip->access_semaphore == NULL)) {
         return false;
     }
 
-    memset(led_strip->led_strip_buf_1, 0, sizeof(struct led_color_t) * led_strip->led_strip_length);
+    memset(led_strip->led_strip_buf, 0, sizeof(struct led_color_t) * led_strip->led_strip_length);
 
     bool init_rmt = led_strip_init_rmt(led_strip);
     if (!init_rmt) {
@@ -193,22 +179,16 @@ bool led_strip_set_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num
         return false;
     }
 
-    led_strip->led_strip_buf_1[pixel_num] = color;
+    xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
+    led_strip->led_strip_buf[pixel_num] = color;
+    xSemaphoreGive(led_strip->access_semaphore);
 
     return set_led_success;
 }
 
 bool led_strip_set_pixel_rgb(struct led_strip_t *led_strip, uint32_t pixel_num, uint8_t red, uint8_t green, uint8_t blue)
 {
-    bool set_led_success = true;
-
-    if ((!led_strip) || (pixel_num > led_strip->led_strip_length)) {
-        return false;
-    }
-
-    led_strip->led_strip_buf_1[pixel_num] = iRGB(red,green,blue);
-
-    return set_led_success;
+    return led_strip_set_pixel_color(led_strip, pixel_num, iRGB(red,green,blue));
 }
 
 bool led_strip_get_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num, irgb_t * color)
@@ -221,7 +201,7 @@ bool led_strip_get_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num
         *color = NULL;
         return false;
     }
-    *color = led_strip->led_strip_buf_1[pixel_num];
+    *color = led_strip->led_strip_buf[pixel_num];
 
     return get_success;
 }
@@ -237,7 +217,9 @@ bool led_strip_clear(struct led_strip_t *led_strip)
         return false;
     }
 
-    memset(led_strip->led_strip_buf_1, 0, sizeof(struct led_color_t) * led_strip->led_strip_length);
-
+    xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
+    memset(led_strip->led_strip_buf, 0, sizeof(struct led_color_t) * led_strip->led_strip_length);
+    xSemaphoreGive(led_strip->access_semaphore);
+    
     return success;
 }

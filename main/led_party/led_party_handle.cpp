@@ -5,23 +5,29 @@
 
 
 
+const xSemaphoreHandle mutexies[] = {
+    xSemaphoreCreateBinary(),
+    xSemaphoreCreateBinary(),
+    xSemaphoreCreateBinary(),
+    xSemaphoreCreateBinary(),
+    xSemaphoreCreateBinary()
+};
 
 const uint8_t LED_STRIP_RMT_INTR_NUMs[] = {9, 12, 13, 17, 18, 19, 20, 21, 23};
 led_strip_t init_new_strip(gpio_num_t strip_data_pin, uint length, uint8_t channel){
     irgb_t* led_strip_buf = (irgb_t *) malloc(length*sizeof(irgb_t)); //normales array ist nicht gut weil er dann die adresse recycled, aber cool wenn man den programmspeicer als farben zeigen will
-    xSemaphoreHandle sema = xSemaphoreCreateBinary();
     led_strip_t led_strip = {
         .led_strip_length = length,
         .gpio = strip_data_pin,
         .rmt_channel = (rmt_channel_t) channel,
         .rmt_interrupt_num = LED_STRIP_RMT_INTR_NUMs[channel],
-        .led_strip_buf_1 = led_strip_buf,
-        .access_semaphore = sema
+        .led_strip_buf = led_strip_buf,
+        .access_semaphore = mutexies[channel]
     };
     bool led_init_ok = led_strip_init(&led_strip);
     led_strip_clear(&led_strip);
     if (led_init_ok){
-        printf("\nled strip initialized\n");
+        printf("led strip initialized\n");
     }
     return led_strip;
 }
@@ -85,10 +91,10 @@ void led_party_task(void *arg){
     led_strip_t strips[amount_strips];
     initialize_strips(strips);
 
-    uint32_t running_value = 0;
-    while (1)
-    {++running_value;
-        drive_effect(strips,50,effect_spread_pixel);
+    
+    for(uint32_t running_value = 0;1;++running_value)
+    {
+        //drive_effect(strips,50,effect_spread_pixel);
     }
     
 }

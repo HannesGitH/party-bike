@@ -14,7 +14,7 @@ class Ws2812_controller
 {
 private:
     xSemaphoreHandle sema;
-    irgb_t *led_strip_buf_1;
+    irgb_t *led_strip_buf;
     struct led_strip_t led_strip;
     uint length;
     

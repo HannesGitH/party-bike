@@ -25,7 +25,7 @@ void init_stuff(){
         xTaskCreate(
             led_party_task,         //task to run
             "led_party_task",       //name of task
-            2048,                   //stack size
+            4096,                   //stack size
             NULL,                   //arg pointer
             configMAX_PRIORITIES-5, //interrupt prio
             &led_party_task_handle  //handle (to kill task)
