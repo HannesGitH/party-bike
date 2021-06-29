@@ -4,7 +4,6 @@
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 #include "freertos/semphr.h"
-#include "ws2812_controller.hpp"
 #include "rgb.h"
 
 #ifndef PARTYMAN_H
@@ -31,17 +30,5 @@
 
 #define DATA_PIN_REAR GPIO_NUM_23 //rear   //leider is det kabel schrotti, deshalb n anderer pin, wär eigtl 26 (todo)
 #define LENGTH_REAR_B 10U
-
-
-class Partyman
-{
-private:
-    Ws2812_controller stripe_MAIN;
-
-public:
-    Partyman(/* args */);
-    ~Partyman();
-    void walk_pixels();
-};
 
 #endif

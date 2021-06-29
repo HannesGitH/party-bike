@@ -1,9 +1,6 @@
 #include "partyman.hpp"
+#include "led_party_handle.hpp"
 #include "led_strip/led_strip.h"
-
-
-
-
 
 const xSemaphoreHandle mutexies[] = {
     xSemaphoreCreateBinary(),
