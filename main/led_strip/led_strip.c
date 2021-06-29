@@ -141,7 +141,7 @@ bool led_strip_init(struct led_strip_t *led_strip)
         return false;
     }
 
-    memset(led_strip->led_strip_buf, 0, sizeof(struct led_color_t) * led_strip->led_strip_length);
+    memset(led_strip->led_strip_buf, 0, sizeof(irgb_t) * led_strip->led_strip_length);
 
     bool init_rmt = led_strip_init_rmt(led_strip);
     if (!init_rmt) {
@@ -199,14 +199,12 @@ bool led_strip_get_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num
     return get_success;
 }
 
-bool led_strip_addto_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num, irgb_t * color)
+bool led_strip_addto_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num, irgb_t color)
 {
     irgb_t current_color;
     if (led_strip_get_pixel_color(led_strip,pixel_num,&current_color))
     {
-        //current_color+*color; //if we dont want to change the color pointed to
-        (*color)+=current_color; //if we do want to change the color pointed to
-        return led_strip_set_pixel_color(led_strip,pixel_num,*color);//&current_color);
+        return led_strip_set_pixel_color(led_strip,pixel_num,color+current_color);
     }
     return false;
 }

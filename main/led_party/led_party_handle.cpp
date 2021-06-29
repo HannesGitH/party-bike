@@ -72,6 +72,21 @@ void drive_effect(led_strip_t * strips,uint step_millis, struct effect effect){
 }
 
 void effect_spread_pixel_simple_draw(led_strip_t * strips, uint32_t step){
+    irgb_t walking_color = 0xFF44CC;
+    for(uint i=0; i<amount_strips; i++){
+        if(step<=strip_lengths[i]){
+            led_strip_addto_pixel_color(strips+i,step,walking_color);
+            led_strip_addto_pixel_color(strips+i,step-1,invert(walking_color));
+        }
+    }
+}
+
+effect effect_spread_pixel_simple{
+    .repitions = LENGTH_MAIN,
+    .draw = effect_spread_pixel_simple_draw
+};
+
+void effect_spread_pixel_better_draw(led_strip_t * strips, uint32_t step){
     for(uint i=0; i<amount_strips; i++){
         if(step<=strip_lengths[i]){
             led_strip_clear(strips+i);
@@ -80,9 +95,9 @@ void effect_spread_pixel_simple_draw(led_strip_t * strips, uint32_t step){
     }
 }
 
-effect effect_spread_pixel_simple{
+effect effect_spread_pixel_better{
     .repitions = LENGTH_MAIN,
-    .draw = effect_spread_pixel_simple_draw
+    .draw = effect_spread_pixel_better_draw
 };
 
 

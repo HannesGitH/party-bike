@@ -18,14 +18,9 @@ irgb_t iRGB
     uint8_t G,
     uint8_t B
 );
-struct led_color_t {
-    uint8_t red;
-    uint8_t green;
-    uint8_t blue;
-};
 
-// TODO make this overloaded operator+()
-struct led_color_t add_colors(struct led_color_t a,struct led_color_t b);
+irgb_t invert(irgb_t iRGB);
+
 #ifdef __cplusplus
 }
 #endif
