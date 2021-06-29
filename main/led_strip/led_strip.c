@@ -80,12 +80,6 @@ static void led_strip_task(void *arg)
         rmt_wait_tx_done(led_strip->rmt_channel, portMAX_DELAY);
         xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
 
-        /*
-         * If buf 1 was previously being shown and now buf 2 is being shown,
-         * it should update the new rmt items array. If buf 2 was previous being shown
-         * and now buf 1 is being shown, it should update the new rmt items array.
-         * Otherwise, no need to update the array
-         */
         make_new_rmt_items = true;
 
         if (make_new_rmt_items) {
@@ -205,6 +199,18 @@ bool led_strip_get_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num
     return get_success;
 }
 
+bool led_strip_addto_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num, irgb_t * color)
+{
+    irgb_t current_color;
+    if (led_strip_get_pixel_color(led_strip,pixel_num,&current_color))
+    {
+        //current_color+*color; //if we dont want to change the color pointed to
+        (*color)+=current_color; //if we do want to change the color pointed to
+        return led_strip_set_pixel_color(led_strip,pixel_num,*color);//&current_color);
+    }
+    return false;
+}
+
 /**
  * Clears the LED strip
  */
@@ -217,7 +223,7 @@ bool led_strip_clear(struct led_strip_t *led_strip)
     }
 
     xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
-    memset(led_strip->led_strip_buf, 0, sizeof(struct led_color_t) * led_strip->led_strip_length);
+    memset(led_strip->led_strip_buf, 0, sizeof(irgb_t) * led_strip->led_strip_length);
     xSemaphoreGive(led_strip->access_semaphore);
     
     return success;

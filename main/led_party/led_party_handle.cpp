@@ -46,7 +46,7 @@ const uint16_t strip_lengths[] = {
     LENGTH_DIAG,
     LENGTH_FRNT,
     LENGTH_SDDL,
-    LENGTH_REAR_T
+    LENGTH_REAR_B
 };
 const gpio_num_t strip_pins[] = {
     DATA_PIN_MAIN,
@@ -74,17 +74,18 @@ void drive_effect(led_strip_t * strips,uint step_millis, struct effect effect){
     }
 }
 
-void effect_spread_pixel_draw(led_strip_t * strips, uint32_t step){
+void effect_spread_pixel_simple_draw(led_strip_t * strips, uint32_t step){
     for(uint i=0; i<amount_strips; i++){
-        if(step<strip_lengths[i]){
+        if(step<=strip_lengths[i]){
+            led_strip_clear(strips+i);
             led_strip_set_pixel_color(strips+i,step,0xFF44CC);
         }
     }
 }
 
-effect effect_spread_pixel{
-    .repitions = LENGTH_MAIN_L,
-    .draw = effect_spread_pixel_draw
+effect effect_spread_pixel_simple{
+    .repitions = LENGTH_MAIN,
+    .draw = effect_spread_pixel_simple_draw
 };
 
 
@@ -99,7 +100,10 @@ void led_party_task(void *arg){
     
     for(uint32_t running_value = 0;1;++running_value)
     {
-        //drive_effect(strips,50,effect_spread_pixel);
+        drive_effect(strips,50,effect_spread_pixel_simple);
+        //led_strip_set_pixel_color(strips+MAIN,running_value%strip_lengths[MAIN],0x10743C);
+        //led_strip_set_pixel_color(strips+MAIN,(running_value-1)%strip_lengths[MAIN],0xFF44CC);
+        //vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
     
 }
