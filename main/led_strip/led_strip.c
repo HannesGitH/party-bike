@@ -76,9 +76,7 @@ static void led_strip_task(void *arg)
     led_make_waveform = led_strip_fill_rmt_items_ws2812;
 
     for(;;) {
-        //alle dieserlbe addresse?!
-        printf("strip %d's (%d) mutex is at %d \n" , (int) led_strip->rmt_channel, (int) led_strip, (int) led_strip->access_semaphore);
-        configASSERT(led_strip->access_semaphore); //todo: why the hell is this getting nulled?!
+        configASSERT(led_strip->access_semaphore);
         rmt_wait_tx_done(led_strip->rmt_channel, portMAX_DELAY);
         xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
 
