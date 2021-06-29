@@ -58,6 +58,11 @@ void initialize_strips(led_strip_t * strips){
         init_new_strip(strips+i,strip_pins[i],strip_lengths[i],i);
     }
 }
+void led_strips_clear(led_strip_t * strips){
+    for(int i=0; i<amount_strips; i++){
+        led_strip_clear(strips+i);
+    }
+}
 
 struct effect{
     uint32_t repitions;
@@ -71,7 +76,7 @@ void drive_effect(led_strip_t * strips,uint step_millis, struct effect effect){
     }
 }
 
-void effect_spread_pixel_simple_draw(led_strip_t * strips, uint32_t step){
+void effect_spread_pixel_draw(led_strip_t * strips, uint32_t step){
     irgb_t walking_color = 0xFF44CC;
     for(uint i=0; i<amount_strips; i++){
         if(step<=strip_lengths[i]){
@@ -81,23 +86,68 @@ void effect_spread_pixel_simple_draw(led_strip_t * strips, uint32_t step){
     }
 }
 
-effect effect_spread_pixel_simple{
+effect effect_spread_pixel{
     .repitions = LENGTH_MAIN,
-    .draw = effect_spread_pixel_simple_draw
+    .draw = effect_spread_pixel_draw
 };
 
-void effect_spread_pixel_better_draw(led_strip_t * strips, uint32_t step){
-    for(uint i=0; i<amount_strips; i++){
-        if(step<=strip_lengths[i]){
-            led_strip_clear(strips+i);
-            led_strip_set_pixel_color(strips+i,step,0xFF44CC);
+void effect_walk_pixel_draw(led_strip_t * strips, uint32_t step){
+    irgb_t walking_color = 0xFF44CC;
+    if(step<LENGTH_MAIN_L){
+        //main_r
+        led_strip_addto_pixel_color(strips+MAIN,step,walking_color);
+        //main_l
+        led_strip_addto_pixel_color(strips+MAIN,strip_lengths[MAIN]-LENGTH_REAR_T-step,walking_color);
+        //rear_t
+        led_strip_addto_pixel_color(strips+MAIN,strip_lengths[DIAG]-LENGTH_REAR_T+step,walking_color);
+        
+        if(step!=0){//undo
+            //main_r
+            led_strip_addto_pixel_color(strips+MAIN,step-1,invert(walking_color));
+            //main_l
+            led_strip_addto_pixel_color(strips+MAIN,strip_lengths[MAIN]-LENGTH_REAR_T-step+1,invert(walking_color));
+            //rear_t
+            led_strip_addto_pixel_color(strips+MAIN,strip_lengths[DIAG]-LENGTH_REAR_T+step+1,invert(walking_color));    
+        }
+        
+    }else if (step<LENGTH_MAIN_L+LENGTH_DIAG_L)
+    {
+        step-=LENGTH_MAIN_L;
+        //diag_r
+        led_strip_addto_pixel_color(strips+DIAG,LENGTH_DIAG_R-step,walking_color);
+        //diag_l
+        led_strip_addto_pixel_color(strips+DIAG,LENGTH_DIAG_R+step,walking_color);
+        //frnt
+        led_strip_addto_pixel_color(strips+FRNT,step+3,walking_color);
+                
+        if(step!=0){//undo
+            //diag_r
+            led_strip_addto_pixel_color(strips+DIAG,LENGTH_DIAG_R+step-1,invert(walking_color));
+            //diag_l
+            led_strip_addto_pixel_color(strips+DIAG,LENGTH_DIAG_L-step+1,invert(walking_color));
+            //frnt
+            led_strip_addto_pixel_color(strips+FRNT,step+3-1,invert(walking_color));
+        }
+    
+    }else //if (step<LENGTH_MAIN_L+LENGTH_DIAG_L+LENGTH_SDDL)
+    {
+        step-=LENGTH_MAIN_L+LENGTH_SDDL;
+        //sddl
+        led_strip_addto_pixel_color(strips+SDDL,LENGTH_SDDL-step,walking_color);
+        //rear_b
+        led_strip_addto_pixel_color(strips+REAR,LENGTH_REAR_B-step,walking_color);
+        if(step!=0){//undo
+            //sddl
+            led_strip_addto_pixel_color(strips+SDDL,LENGTH_SDDL-step+1,invert(walking_color));
+            //rear_b
+            led_strip_addto_pixel_color(strips+REAR,LENGTH_REAR_B-step+1,invert(walking_color));
         }
     }
 }
 
-effect effect_spread_pixel_better{
-    .repitions = LENGTH_MAIN,
-    .draw = effect_spread_pixel_better_draw
+effect effect_walk_pixel{
+    .repitions = LENGTH_MAIN_L+LENGTH_SDDL+LENGTH_DIAG_L+1,
+    .draw = effect_walk_pixel_draw
 };
 
 
@@ -112,7 +162,8 @@ void led_party_task(void *arg){
     
     for(uint32_t running_value = 0;1;++running_value)
     {
-        drive_effect(strips,50,effect_spread_pixel_simple);
+        drive_effect(strips,50,effect_walk_pixel);
+        led_strips_clear(strips);
         //led_strip_set_pixel_color(strips+MAIN,running_value%strip_lengths[MAIN],0x10743C);
         //led_strip_set_pixel_color(strips+MAIN,(running_value-1)%strip_lengths[MAIN],0xFF44CC);
         //vTaskDelay(1000 / portTICK_PERIOD_MS);
