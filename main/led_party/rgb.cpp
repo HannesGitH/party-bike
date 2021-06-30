@@ -29,25 +29,45 @@ irgb_t irgb_from_color
 
 
 uint8_t dim_from_irgb(irgb_t irgb, RGB_dim dim){
-    return (irgb>>(8*(2-dim)));
+    return (irgb>>(8*(2-dim)))&0xFF;
 }
 
-irgb_t change_hue(
-    irgb_t in,
-    float H
-){
-    float U = cos(H*M_PI/180);
-    float W = sin(H*M_PI/180);
+uint8_t clamp(float v) //define a function to bound and round the input float value to 0-255
+{
+    if (v < 0)
+        return 0;
+    if (v > 255)
+        return 255;
+    return (uint8_t)v;
+}
 
-    Color C;
-    C.r = (.299+.701*U+.168*W)*dim_from_irgb(in,red)
-        + (.587-.587*U+.330*W)*dim_from_irgb(in,green)
-        + (.114-.114*U-.497*W)*dim_from_irgb(in,blue);
-    C.g = (.299-.299*U-.328*W)*dim_from_irgb(in,red)
-        + (.587+.413*U+.035*W)*dim_from_irgb(in,green)
-        + (.114-.114*U+.292*W)*dim_from_irgb(in,blue);
-    C.b = (.299-.3*U+1.25*W)*dim_from_irgb(in,red)
-        + (.587-.588*U-1.05*W)*dim_from_irgb(in,green)
-        + (.114+.886*U-.203*W)*dim_from_irgb(in,blue);
-    return irgb_from_color(C);
+Color change_hue_c(const Color &in, const float fHue)
+{
+    Color out;
+    const float cosA = cos(fHue*3.14159265f/180); //convert degrees to radians
+    const float sinA = sin(fHue*3.14159265f/180); //convert degrees to radians
+    //calculate the rotation matrix, only depends on Hue
+    float matrix[3][3] = {{cosA + (1.0f - cosA) / 3.0f, 1.0f/3.0f * (1.0f - cosA) - sqrtf(1.0f/3.0f) * sinA, 1.0f/3.0f * (1.0f - cosA) + sqrtf(1.0f/3.0f) * sinA},
+        {1.0f/3.0f * (1.0f - cosA) + sqrtf(1.0f/3.0f) * sinA, cosA + 1.0f/3.0f*(1.0f - cosA), 1.0f/3.0f * (1.0f - cosA) - sqrtf(1.0f/3.0f) * sinA},
+        {1.0f/3.0f * (1.0f - cosA) - sqrtf(1.0f/3.0f) * sinA, 1.0f/3.0f * (1.0f - cosA) + sqrtf(1.0f/3.0f) * sinA, cosA + 1.0f/3.0f * (1.0f - cosA)}};
+    //Use the rotation matrix to convert the RGB directly
+    out.r = clamp(in.r*matrix[0][0] + in.g*matrix[0][1] + in.b*matrix[0][2]);
+    out.g = clamp(in.r*matrix[1][0] + in.g*matrix[1][1] + in.b*matrix[1][2]);
+    out.b = clamp(in.r*matrix[2][0] + in.g*matrix[2][1] + in.b*matrix[2][2]);
+    return out;
+}
+
+irgb_t change_hue(irgb_t in, const float fHue){
+    return
+        irgb_from_color(
+            change_hue_c(
+                Color{
+                    .r = dim_from_irgb(in,red),
+                    .g = dim_from_irgb(in,green),
+                    .b = dim_from_irgb(in,blue),
+                },
+                fHue
+            )
+        )
+    ;
 }

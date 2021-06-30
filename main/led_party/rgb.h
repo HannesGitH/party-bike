@@ -28,8 +28,19 @@ enum RGB_dim{
 irgb_t invert(irgb_t iRGB);
 
 uint8_t dim_from_irgb(irgb_t irgb, enum RGB_dim dim);
-irgb_t change_hue(irgb_t irgb);
+irgb_t change_hue(irgb_t irgb, float H);
 
+irgb_t change_hsv_wrong(
+    irgb_t in,        // color to transform
+    float h,          // hue shift (in degrees)
+    float s,          // saturation multiplier (scalar)
+    float v           // value multiplier (scalar)
+);
+
+irgb_t change_hue(
+    irgb_t in,        // color to transform
+    float h          // hue shift (in degrees)
+);
 
 #ifdef __cplusplus
 }

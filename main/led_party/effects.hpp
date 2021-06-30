@@ -8,7 +8,7 @@ extern "C" {
 #define EFFECTS_H
 
 struct effect{
-    uint32_t repitions;
+    uint32_t repetitions;
     void (*draw)(led_strip_t * strips, uint32_t step, void* extra_args_p);
 };
 
