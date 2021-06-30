@@ -31,4 +31,33 @@
 #define DATA_PIN_REAR GPIO_NUM_23 //rear   //leider is det kabel schrotti, deshalb n anderer pin, wär eigtl 26 (todo)
 #define LENGTH_REAR_B 10U
 
+
+
+
+#define amount_strips 5
+enum strip_enum{
+    MAIN=0,
+    DIAG=1,
+    FRNT=2,
+    SDDL=3,
+    REAR=4
+};
+const uint16_t strip_lengths[] = {
+    LENGTH_MAIN,
+    LENGTH_DIAG,
+    LENGTH_FRNT,
+    LENGTH_SDDL,
+    LENGTH_REAR_B
+};
+const gpio_num_t strip_pins[] = {
+    DATA_PIN_MAIN,
+    DATA_PIN_DIAG,
+    DATA_PIN_FRNT,
+    DATA_PIN_SDDL,
+    DATA_PIN_REAR
+};
+
+
+
+
 #endif
