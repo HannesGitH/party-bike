@@ -14,6 +14,10 @@ irgb_t invert(irgb_t iRGB){
     return (iRGB ^ 0x00FFFFFF)+1;
 }
 
+irgb_t lighten_fast(irgb_t iRGB, int8_t amount){
+    return (iRGB + (0x010101*amount))&0xFFFFFF; //fast but overflows wrongly
+}
+
 struct Color{
     uint8_t r;
     uint8_t g;
@@ -41,15 +45,18 @@ uint8_t clamp(float v) //define a function to bound and round the input float va
     return (uint8_t)v;
 }
 
+//todo make saturation and value change possible as well ( see http://beesbuzz.biz/code/16-hsv-color-transforms )
 Color change_hue_c(const Color &in, const float fHue)
 {
     Color out;
     const float cosA = cos(fHue*3.14159265f/180); //convert degrees to radians
     const float sinA = sin(fHue*3.14159265f/180); //convert degrees to radians
     //calculate the rotation matrix, only depends on Hue
-    float matrix[3][3] = {{cosA + (1.0f - cosA) / 3.0f, 1.0f/3.0f * (1.0f - cosA) - sqrtf(1.0f/3.0f) * sinA, 1.0f/3.0f * (1.0f - cosA) + sqrtf(1.0f/3.0f) * sinA},
+    float matrix[3][3] = {
+        {cosA + (1.0f - cosA) / 3.0f, 1.0f/3.0f * (1.0f - cosA) - sqrtf(1.0f/3.0f) * sinA, 1.0f/3.0f * (1.0f - cosA) + sqrtf(1.0f/3.0f) * sinA},
         {1.0f/3.0f * (1.0f - cosA) + sqrtf(1.0f/3.0f) * sinA, cosA + 1.0f/3.0f*(1.0f - cosA), 1.0f/3.0f * (1.0f - cosA) - sqrtf(1.0f/3.0f) * sinA},
-        {1.0f/3.0f * (1.0f - cosA) - sqrtf(1.0f/3.0f) * sinA, 1.0f/3.0f * (1.0f - cosA) + sqrtf(1.0f/3.0f) * sinA, cosA + 1.0f/3.0f * (1.0f - cosA)}};
+        {1.0f/3.0f * (1.0f - cosA) - sqrtf(1.0f/3.0f) * sinA, 1.0f/3.0f * (1.0f - cosA) + sqrtf(1.0f/3.0f) * sinA, cosA + 1.0f/3.0f * (1.0f - cosA)}
+    };
     //Use the rotation matrix to convert the RGB directly
     out.r = clamp(in.r*matrix[0][0] + in.g*matrix[0][1] + in.b*matrix[0][2]);
     out.g = clamp(in.r*matrix[1][0] + in.g*matrix[1][1] + in.b*matrix[1][2]);

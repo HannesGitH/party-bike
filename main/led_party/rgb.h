@@ -9,6 +9,7 @@ extern "C" {
 
 /**
  * RGB LED colors
+ * first 8 bit for flags last 3 bytes for r g b respectively
  */
 typedef uint32_t irgb_t;
 
@@ -26,6 +27,10 @@ enum RGB_dim{
 };
 
 irgb_t invert(irgb_t iRGB);
+
+//todo
+irgb_t lighten_fast(irgb_t iRGB, int8_t amount);
+irgb_t lighten(irgb_t iRGB, int8_t amount);
 
 uint8_t dim_from_irgb(irgb_t irgb, enum RGB_dim dim);
 irgb_t change_hue(irgb_t irgb, float H);
