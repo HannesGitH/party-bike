@@ -101,3 +101,51 @@ effect effect_walking_colorline{
     .draw = effect_walking_colorline_draw
 };
 
+
+void effect_streetlight_draw(led_strip_t * strips, uint32_t step, void* bool__turn_off_everything_else_so_its_legal){
+    bool legal = bool__turn_off_everything_else_so_its_legal ? *(bool*) bool__turn_off_everything_else_so_its_legal : false; //yo we just wanna turn the other running effects off if we reeeally wanna be legal
+    
+    if(legal){
+        for(int i=0; i<amount_strips; i++){
+            led_strip_clear(strips+i);
+        }
+    }
+
+    //turn rear_b red
+    for (uint8_t i = 0; i < strip_lengths[REAR]; i++)
+    {
+        led_strip_set_pixel_color(strips+REAR,i,0xFF0000);
+    }
+    //turn rear_t red as well
+    for (uint8_t i = 0; i < LENGTH_REAR_T; i++)
+    {
+        led_strip_set_pixel_color(strips+MAIN,LENGTH_MAIN-LENGTH_REAR_T+i,0xFF0000);
+    }
+
+    //turn front white
+    for (uint8_t i = 0; i < strip_lengths[FRNT]-3; i++)//there r 3 pixels not facing the front on the frnt strip
+    {
+        led_strip_set_pixel_color(strips+FRNT,i,0xFFFFFF);
+    }
+    /* 
+    //saddle is also facing the front so turn it white as well
+    for (uint8_t i = 0; i < strip_lengths[SDDL]; i++)
+    {
+        led_strip_set_pixel_color(strips+SDDL,i,0xFFFFFF);
+    }
+     */
+    //turn other pixels facing the front white
+    led_strip_set_pixel_color(strips+MAIN,LENGTH_MAIN_R  ,0xFFFFFF);
+    led_strip_set_pixel_color(strips+MAIN,LENGTH_MAIN_R-1,0xFFFFFF);
+    led_strip_set_pixel_color(strips+DIAG,LENGTH_DIAG_R  ,0xFFFFFF);
+    led_strip_set_pixel_color(strips+DIAG,LENGTH_DIAG_R-1,0xFFFFFF);
+    
+    //turn other pixels facing the back red
+    led_strip_set_pixel_color(strips+FRNT,LENGTH_FRNT-1,0xFF0000);
+    led_strip_set_pixel_color(strips+FRNT,LENGTH_FRNT-2,0xFF0000);
+}
+
+effect effect_streetlight{
+    .repetitions = 1,
+    .draw = effect_streetlight_draw
+};

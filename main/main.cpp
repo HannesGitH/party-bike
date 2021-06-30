@@ -47,7 +47,7 @@ void app_main(void)
 {
     init_stuff();
 
-    //blink led to show its running
+    /* //blink led to show its running
         gpio_reset_pin(BLINK_GPIO);
         gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
 
@@ -56,6 +56,6 @@ void app_main(void)
             vTaskDelay(500 / portTICK_PERIOD_MS);
             gpio_set_level(BLINK_GPIO, 1);
             vTaskDelay(500 / portTICK_PERIOD_MS);
-        }
+        } */
 }
 }

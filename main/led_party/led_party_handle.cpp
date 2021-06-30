@@ -58,7 +58,8 @@ void led_party_task(void *arg){
     {
         the_bestest_color+=0x123456;
         //drive_effect(strips,50,effect_walk_pixel,&the_bestest_color);
-        drive_effect(strips,50,effect_walking_colorline,&running_value);
+        //drive_effect(strips,50,effect_walking_colorline,&running_value);
+        drive_effect(strips,50,effect_streetlight,NULL);
         led_strips_clear(strips);
         //led_strip_set_pixel_color(strips+DIAG,running_value%LENGTH_DIAG,(running_value%3)*0xFF3456);
         //led_strip_set_pixel_color(strips+MAIN,running_value%strip_lengths[MAIN],0x10743C);
