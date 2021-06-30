@@ -1,14 +1,14 @@
 #include "effects.hpp"
 #include "partyman.hpp"
 
-void drive_effect(led_strip_t * strips,uint step_millis, struct effect effect){
+void drive_effect(led_strip_t * strips,uint step_millis, struct effect effect, void * extra_args_p){
     for(int step=0;step<effect.repitions;step++){
-        effect.draw(strips,step);
+        effect.draw(strips,step,extra_args_p);
         vTaskDelay(step_millis / portTICK_PERIOD_MS);
     }
 }
 
-void effect_spread_pixel_draw(led_strip_t * strips, uint32_t step){
+void effect_spread_pixel_draw(led_strip_t * strips, uint32_t step, void* extra_args_p){
     irgb_t walking_color = 0xFF44CC;
     for(uint i=0; i<amount_strips; i++){
         if(step<=strip_lengths[i]){
@@ -19,8 +19,8 @@ void effect_spread_pixel_draw(led_strip_t * strips, uint32_t step){
 }
 
 
-void effect_walk_pixel_draw(led_strip_t * strips, uint32_t step){
-    irgb_t walking_color = 0xFF44CC;
+void effect_walk_pixel_draw(led_strip_t * strips, uint32_t step, void* extra_args_p){
+    irgb_t walking_color = extra_args_p ? *(irgb_t*) extra_args_p : 0xFF44CC;
 
     if(step<LENGTH_MAIN_L){
         //main_r
@@ -77,7 +77,6 @@ void effect_walk_pixel_draw(led_strip_t * strips, uint32_t step){
     }
 }
 
-
 effect effect_walk_pixel{
     .repitions = LENGTH_MAIN_L+LENGTH_SDDL+LENGTH_DIAG_L+1,
     .draw = effect_walk_pixel_draw
@@ -86,3 +85,19 @@ effect effect_spread_pixel{
     .repitions = LENGTH_MAIN,
     .draw = effect_spread_pixel_draw  
 };
+
+void effect_walking_colorline_draw(led_strip_t * strips, uint32_t step, void* extra_args_p){
+    uint8_t length = extra_args_p ? *(uint8_t*) extra_args_p : 10;
+    irgb_t color = 0xFFFFFF;
+    for (uint8_t i = 0; i < length; i++)
+    {
+        irgb_t current_color = color - (i*0x123456);
+        effect_walk_pixel.draw(strips,step-i,&current_color);
+    }
+}
+
+effect effect_walking_colorline{
+    .repitions = LENGTH_MAIN_L+LENGTH_SDDL+LENGTH_DIAG_L+1,
+    .draw = effect_walking_colorline_draw
+};
+

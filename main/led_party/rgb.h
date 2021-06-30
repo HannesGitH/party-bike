@@ -19,7 +19,17 @@ irgb_t iRGB
     uint8_t B
 );
 
+enum RGB_dim{
+    red=0,
+    green=1,
+    blue=2
+};
+
 irgb_t invert(irgb_t iRGB);
+
+uint8_t dim_from_irgb(irgb_t irgb, enum RGB_dim dim);
+irgb_t change_hue(irgb_t irgb);
+
 
 #ifdef __cplusplus
 }

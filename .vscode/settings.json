@@ -10,6 +10,7 @@
         "task.h": "c",
         "gpio.h": "c",
         "string_view": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "cmath": "cpp"
     },
 }
