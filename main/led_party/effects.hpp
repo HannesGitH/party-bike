@@ -12,7 +12,9 @@ struct effect{
     void (*draw)(led_strip_t * strips, uint32_t step, void* extra_args_p);
 };
 
+//todo : the null default doesnt really work
 void drive_effect(led_strip_t * strips,uint step_millis, struct effect effect, void* extra_args_p = NULL);
+void drive_effects(led_strip_t * strips,uint step_millis, struct effect * effects, uint8_t amount, void * extra_args_p[] = NULL);
 
 // void effect_spread_pixel_draw(led_strip_t * strips, uint32_t step);
 // void effect_walk_pixel_draw(led_strip_t * strips, uint32_t step);

@@ -1,9 +1,27 @@
 #include "effects.hpp"
 #include "partyman.hpp"
+#include "../misc/math.hpp"
 
 void drive_effect(led_strip_t * strips,uint step_millis, struct effect effect, void * extra_args_p){
     for(int step=0;step<effect.repetitions;step++){
         effect.draw(strips,step,extra_args_p);
+        vTaskDelay(step_millis / portTICK_PERIOD_MS);
+    }
+}
+
+void drive_effects(led_strip_t * strips,uint step_millis, effect * effects, uint8_t amount, void * extra_args_p[]){
+    uint32_t max_reps = 0;
+    for (uint16_t i = 0; i < amount; i++)
+    {
+        max_reps = max(max_reps,effects[i].repetitions);
+    }
+    
+    for(int step=0;step<max_reps;step++){
+        for (uint16_t i = 0; i < amount; i++)
+        {
+            //printf("%d effect argument %d points to %d\n",i,(int)extra_args_p[i],*(uint8_t*) extra_args_p[i]);
+            effects[i].draw(strips,step, extra_args_p ? extra_args_p[i] : NULL);
+        }
         vTaskDelay(step_millis / portTICK_PERIOD_MS);
     }
 }
@@ -103,7 +121,8 @@ effect effect_walking_colorline{
 
 
 void effect_streetlight_draw(led_strip_t * strips, uint32_t step, void* bool__turn_off_everything_else_so_its_legal){
-    bool legal = bool__turn_off_everything_else_so_its_legal ? *(bool*) bool__turn_off_everything_else_so_its_legal : false; //yo we just wanna turn the other running effects off if we reeeally wanna be legal
+    //todo why and when does this crash (in drive_effects if extraagrmunt is NULL) but when else and most importantly - WHY?!
+    bool legal = false;//bool__turn_off_everything_else_so_its_legal ? *(bool*) bool__turn_off_everything_else_so_its_legal : false; //yo we just wanna turn the other running effects off if we reeeally wanna be legal
     
     if(legal){
         for(int i=0; i<amount_strips; i++){
@@ -143,6 +162,7 @@ void effect_streetlight_draw(led_strip_t * strips, uint32_t step, void* bool__tu
     //turn other pixels facing the back red
     led_strip_set_pixel_color(strips+FRNT,LENGTH_FRNT-1,0xFF0000);
     led_strip_set_pixel_color(strips+FRNT,LENGTH_FRNT-2,0xFF0000);
+    led_strip_set_pixel_color(strips+FRNT,LENGTH_FRNT-3,0xFF0000);
 }
 
 effect effect_streetlight{

@@ -53,13 +53,26 @@ void led_party_task(void *arg){
     initialize_strips(strips);
 
     irgb_t the_bestest_color = 0x00FFFF;
+    uint8_t length_for_rgb_stripe = 0;
     
+    struct effect effects[] = {
+        effect_walk_pixel,
+        effect_walking_colorline,
+        effect_streetlight
+    };
+
+    void ** extra_effect_args = (void**) malloc(sizeof(void*)*10);
+
+    extra_effect_args[1]=&length_for_rgb_stripe;
+
     for(uint32_t running_value = 0;1;++running_value)
     {
         the_bestest_color+=0x123456;
         //drive_effect(strips,50,effect_walk_pixel,&the_bestest_color);
         //drive_effect(strips,50,effect_walking_colorline,&running_value);
-        drive_effect(strips,50,effect_streetlight,NULL);
+        length_for_rgb_stripe = running_value;
+        drive_effects(strips,50,effects+1,2,extra_effect_args+1); 
+        //drive_effect(strips,50,effect_walking_colorline,effect_streetlight);
         led_strips_clear(strips);
         //led_strip_set_pixel_color(strips+DIAG,running_value%LENGTH_DIAG,(running_value%3)*0xFF3456);
         //led_strip_set_pixel_color(strips+MAIN,running_value%strip_lengths[MAIN],0x10743C);

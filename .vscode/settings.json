@@ -11,6 +11,10 @@
         "gpio.h": "c",
         "string_view": "cpp",
         "random": "cpp",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "limits": "cpp",
+        "utility": "cpp",
+        "chrono": "cpp",
+        "algorithm": "cpp"
     },
 }
