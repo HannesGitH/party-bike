@@ -23,6 +23,9 @@ extern effect effect_walk_pixel;
 extern effect effect_spread_pixel;
 extern effect effect_walking_colorline;
 extern effect effect_streetlight;
+extern effect effect_init_rainbow;
+extern effect effect_change_hue;
+
 
 #ifdef __cplusplus
 }

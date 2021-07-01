@@ -36,8 +36,7 @@ void effect_spread_pixel_draw(led_strip_t * strips, uint32_t step, void* extra_a
     }
 }
 
-
-void effect_walk_pixel_draw(led_strip_t * strips, uint32_t step, void* extra_args_p){
+void draw_iterated_pixel(led_strip_t * strips, uint32_t step, void* extra_args_p){
     irgb_t walking_color = extra_args_p ? *(irgb_t*) extra_args_p : 0xFF44CC;
 
     if(step<LENGTH_MAIN_L){
@@ -47,15 +46,6 @@ void effect_walk_pixel_draw(led_strip_t * strips, uint32_t step, void* extra_arg
         led_strip_addto_pixel_color(strips+MAIN,strip_lengths[MAIN]-LENGTH_REAR_T-step-1,walking_color);
         //rear_t
         led_strip_addto_pixel_color(strips+MAIN,strip_lengths[MAIN]-LENGTH_REAR_T+step,walking_color);
-    }
-    if(0<step&&step<LENGTH_MAIN_L+1){
-        //undo
-        //main_r
-        led_strip_addto_pixel_color(strips+MAIN,step-1,invert(walking_color));
-        //main_l
-        led_strip_addto_pixel_color(strips+MAIN,strip_lengths[MAIN]-LENGTH_REAR_T-step,invert(walking_color));
-        //rear_t
-        led_strip_addto_pixel_color(strips+MAIN,strip_lengths[MAIN]-LENGTH_REAR_T+step-1,invert(walking_color));    
     }
 
     if (LENGTH_MAIN_L<step&&step<(LENGTH_MAIN_L+LENGTH_DIAG_L+1))
@@ -68,15 +58,6 @@ void effect_walk_pixel_draw(led_strip_t * strips, uint32_t step, void* extra_arg
         //frnt
         led_strip_addto_pixel_color(strips+FRNT,step2+3,walking_color);
     }  
-    if(LENGTH_MAIN_L<(step-1)&&(step-1)<(LENGTH_MAIN_L+LENGTH_DIAG_L+1)){//undo
-        uint32_t step2=step-LENGTH_MAIN_L-1;
-        //diag_r
-        led_strip_addto_pixel_color(strips+DIAG,LENGTH_DIAG_L-step2,invert(walking_color));
-        //diag_l
-        led_strip_addto_pixel_color(strips+DIAG,LENGTH_DIAG_R+step2-1,invert(walking_color));
-        //frnt
-        led_strip_addto_pixel_color(strips+FRNT,step2+3,invert(walking_color));
-    }
     
     if (LENGTH_MAIN_L+LENGTH_DIAG_L<step&&step<LENGTH_MAIN_L+LENGTH_DIAG_L+LENGTH_SDDL)
     {
@@ -86,13 +67,46 @@ void effect_walk_pixel_draw(led_strip_t * strips, uint32_t step, void* extra_arg
         //rear_b
         led_strip_addto_pixel_color(strips+REAR,LENGTH_REAR_B-step3,walking_color);
     }
-    if (LENGTH_MAIN_L+LENGTH_DIAG_L<(step-1)&&(step-1)<LENGTH_MAIN_L+LENGTH_DIAG_L+LENGTH_SDDL){//undo
-        uint32_t step3=step-(LENGTH_MAIN_L+LENGTH_DIAG_L)-1;
+
+}
+
+
+void remove_iterated_pixel(led_strip_t * strips, uint32_t step, void* extra_args_p){
+    irgb_t walking_color = extra_args_p ? *(irgb_t*) extra_args_p : 0xFF44CC;
+
+    if(0<step&&step<LENGTH_MAIN_L){
+        //undo
+        //main_r
+        led_strip_addto_pixel_color(strips+MAIN,step-1,invert(walking_color));
+        //main_l
+        led_strip_addto_pixel_color(strips+MAIN,strip_lengths[MAIN]-LENGTH_REAR_T-step,invert(walking_color));
+        //rear_t
+        led_strip_addto_pixel_color(strips+MAIN,strip_lengths[MAIN]-LENGTH_REAR_T+step-1,invert(walking_color));    
+    }
+ 
+    if(LENGTH_MAIN_L<(step)&&(step)<(LENGTH_MAIN_L+LENGTH_DIAG_L+1)){//undo
+        uint32_t step2=step-LENGTH_MAIN_L;
+        //diag_r
+        led_strip_addto_pixel_color(strips+DIAG,LENGTH_DIAG_L-step2,invert(walking_color));
+        //diag_l
+        led_strip_addto_pixel_color(strips+DIAG,LENGTH_DIAG_R+step2-1,invert(walking_color));
+        //frnt
+        led_strip_addto_pixel_color(strips+FRNT,step2+3,invert(walking_color));
+    }
+    
+    if (LENGTH_MAIN_L+LENGTH_DIAG_L<(step)&&(step)<LENGTH_MAIN_L+LENGTH_DIAG_L+LENGTH_SDDL){//undo
+        uint32_t step3=step-(LENGTH_MAIN_L+LENGTH_DIAG_L);
         //sddl
         led_strip_addto_pixel_color(strips+SDDL,LENGTH_SDDL-step3,invert(walking_color));
         //rear_b
         led_strip_addto_pixel_color(strips+REAR,LENGTH_REAR_B-step3,invert(walking_color));
     }
+}
+
+void effect_walk_pixel_draw(led_strip_t * strips, uint32_t step, void* extra_args_p){
+    irgb_t walking_color = extra_args_p ? *(irgb_t*) extra_args_p : 0xFF44CC;
+    draw_iterated_pixel(strips, step, extra_args_p);
+    remove_iterated_pixel(strips, step, extra_args_p);
 }
 
 effect effect_walk_pixel{
@@ -173,17 +187,35 @@ effect effect_streetlight{
 
 
 void effect_init_rainbow_draw(led_strip_t * strips, uint32_t step, void* total_hue_rotations_p){
-    int total_hue_rotations = total_hue_rotations_p ? *(int*) total_hue_rotations_p : 1;
+    int total_hue_rotations = 2;//total_hue_rotations_p ? *(int*) total_hue_rotations_p : 1;
     uint8_t pixels = LENGTH_MAIN_L+LENGTH_DIAG_L+LENGTH_SDDL;
-    float hue_change = fmod(360*(total_hue_rotations/pixels),360);
-    irgb_t color = 0xFF;
+    float hue_change = fmod(360*(((float)total_hue_rotations)/pixels),360);
+    irgb_t color = 0xEF;
     for (uint8_t i = 0; i < pixels; i++)
     {
         irgb_t current_color = change_hue(color,i*hue_change);
-        effect_walk_pixel.draw(strips,step-i,&current_color);
+        draw_iterated_pixel(strips,i,&current_color);
     }
 }
 
-void effect_change_hue(led_strip_t * strips, uint32_t step, void* hue_rotation_p){
-    
+effect effect_init_rainbow{
+    .repetitions = 1,
+    .draw = effect_init_rainbow_draw
+};
+
+void effect_change_hue_draw(led_strip_t * strips, uint32_t step, void* hue_rotation_p){
+    float hue_change = 10;//hue_rotation_p ? fmod(*(float*) hue_rotation_p,360) : 1;
+    irgb_t color;
+    for(int i=0; i<amount_strips; i++){
+        for (uint16_t j = 0; j < strip_lengths[i]; j++)
+        {
+            led_strip_get_pixel_color(strips+i,j,&color);
+            led_strip_set_pixel_color(strips+i,j,change_hue(color,hue_change));
+        }
+    }
 }
+
+effect effect_change_hue{
+    .repetitions = 360,
+    .draw = effect_change_hue_draw
+};

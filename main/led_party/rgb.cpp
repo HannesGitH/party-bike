@@ -112,5 +112,5 @@ irgb_t change_hsv(
 }
 
 irgb_t change_hue(irgb_t in, const float fHue){
-    return change_hsv(in,fHue,1,1);
+    return change_hsv(in,fHue,1.02,1.0);
 }
