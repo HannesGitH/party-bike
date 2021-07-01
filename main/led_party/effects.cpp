@@ -109,7 +109,8 @@ void effect_walking_colorline_draw(led_strip_t * strips, uint32_t step, void* ex
     irgb_t color = 0xFF;
     for (uint8_t i = 0; i < length; i++)
     {
-        irgb_t current_color = change_hue(color,(float)i*10);
+        float sat = (float)(length-i)/(float)length;
+        irgb_t current_color = change_hsv(color,(float)i*10,sat,sat);
         effect_walk_pixel.draw(strips,step-i,&current_color);
     }
 }
