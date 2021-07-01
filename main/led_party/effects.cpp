@@ -170,3 +170,20 @@ effect effect_streetlight{
     .repetitions = 1,
     .draw = effect_streetlight_draw
 };
+
+
+void effect_init_rainbow_draw(led_strip_t * strips, uint32_t step, void* total_hue_rotations_p){
+    int total_hue_rotations = total_hue_rotations_p ? *(int*) total_hue_rotations_p : 1;
+    uint8_t pixels = LENGTH_MAIN_L+LENGTH_DIAG_L+LENGTH_SDDL;
+    float hue_change = fmod(360*(total_hue_rotations/pixels),360);
+    irgb_t color = 0xFF;
+    for (uint8_t i = 0; i < pixels; i++)
+    {
+        irgb_t current_color = change_hue(color,i*hue_change);
+        effect_walk_pixel.draw(strips,step-i,&current_color);
+    }
+}
+
+void effect_change_hue(led_strip_t * strips, uint32_t step, void* hue_rotation_p){
+    
+}

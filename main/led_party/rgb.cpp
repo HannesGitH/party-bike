@@ -54,15 +54,21 @@ uint8_t clamp(float v) //define a function to bound and round the input float va
     return (uint8_t)v;
 }
 
-//done? make saturation and value change possible as well ( see http://beesbuzz.biz/code/16-hsv-color-transforms )
-Color change_hsv_c(
-    const Color &in, 
+Color apply_matrix(float ** matrix,const Color &in){
+    Color out;
+    out.r = in.r*matrix[0][0] + in.g*matrix[0][1] + in.b*matrix[0][2];
+    out.g = in.r*matrix[1][0] + in.g*matrix[1][1] + in.b*matrix[1][2];
+    out.b = in.r*matrix[2][0] + in.g*matrix[2][1] + in.b*matrix[2][2];
+    return out;
+}
+
+float latest_matrix[3][3];
+
+void make_hsv_matrix(
     const float fHue,
     const float fSat,
     const float fVal
-)
-{
-    Color out;
+){
     const float cosA = fSat*cos(fHue*3.14159265f/180); //convert degrees to radians
     const float sinA = fSat*sin(fHue*3.14159265f/180); //convert degrees to radians
 
@@ -76,15 +82,32 @@ Color change_hsv_c(
     const float minus = aThirdOfOneMinusCosA -rootThirdTimesSinA;
 
     //calculate the rotation matrix, only depends on Hue
-    float matrix[3][3] = {
+    float new_matrix[3][3] = {
         {   cosA + oneMinusCosA / 3.0f  , minus                         , plus                          },
         {   plus                        , cosA + aThirdOfOneMinusCosA   , minus                         },
         {   minus                       , plus                          , cosA + aThirdOfOneMinusCosA   }
     };
+    latest_matrix = new_matrix;
+}
+
+Color change_hsv_c(
+    const Color &in, 
+    const float fHue,
+    const float fSat,
+    const float fVal
+)
+{
+    Color out;
+    make_hsv_matrix(
+        fHue,
+        fSat,
+        fVal
+    );
     //Use the rotation matrix to convert the RGB directly
-    out.r = clamp((in.r*matrix[0][0] + in.g*matrix[0][1] + in.b*matrix[0][2])*fVal);
-    out.g = clamp((in.r*matrix[1][0] + in.g*matrix[1][1] + in.b*matrix[1][2])*fVal);
-    out.b = clamp((in.r*matrix[2][0] + in.g*matrix[2][1] + in.b*matrix[2][2])*fVal);
+    out = apply_matrix((float**)latest_matrix,in);
+    out.r = clamp(out.r*fVal);
+    out.g = clamp(out.g*fVal);
+    out.b = clamp(out.b*fVal);
     return out;
 }
 
