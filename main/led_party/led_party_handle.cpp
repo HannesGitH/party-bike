@@ -67,14 +67,14 @@ void led_party_task(void *arg){
 
     extra_effect_args[1]=&length_for_rgb_stripe;
 
-//drive_effect(strips,50,effects[2]);
+drive_effect(strips,50,effects[2]);
     for(uint32_t running_value = 0;1;++running_value)
     {
         the_bestest_color+=0x123456;
         //drive_effect(strips,50,effect_walk_pixel,&the_bestest_color);
         //drive_effect(strips,50,effect_walking_colorline,&running_value);
         length_for_rgb_stripe = running_value;
-        drive_effects(strips,50,effects+2,3,extra_effect_args+2); 
+        drive_effects(strips,50,effects+3,2,extra_effect_args+3,false); 
         //drive_effect(strips,50,effects[2]);
         //drive_effect(strips,50,effect_walking_colorline,effect_streetlight);
         //drive_effect(strips,30,effects[3]);

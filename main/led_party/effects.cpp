@@ -9,7 +9,7 @@ void drive_effect(led_strip_t * strips,uint step_millis, struct effect effect, v
     }
 }
 
-void drive_effects(led_strip_t * strips,uint step_millis, effect * effects, uint8_t amount, void * extra_args_p[]){
+void drive_effects(led_strip_t * strips,uint step_millis, effect * effects, uint8_t amount, void * extra_args_p[], bool run_all_in_every_step){
     uint32_t max_reps = 0;
     for (uint16_t i = 0; i < amount; i++)
     {
@@ -19,6 +19,7 @@ void drive_effects(led_strip_t * strips,uint step_millis, effect * effects, uint
     for(int step=0;step<max_reps;step++){
         for (uint16_t i = 0; i < amount; i++)
         {
+            if(run_all_in_every_step || effects[i].repetitions < step)
             //printf("%d effect argument %d points to %d\n",i,(int)extra_args_p[i],*(uint8_t*) extra_args_p[i]);
             effects[i].draw(strips,step, extra_args_p ? extra_args_p[i] : NULL);
         }

@@ -12,6 +12,7 @@
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 #include "led_party/led_party_handle.hpp"
+#include "bt/bt_main.hpp"
 
 
 TaskHandle_t led_party_task_handle;
@@ -45,6 +46,7 @@ extern "C"{
 //entry
 void app_main(void)
 {
+    bt_app_main();
     init_stuff();
 
     /* //blink led to show its running

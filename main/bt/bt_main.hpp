@@ -1,0 +1,1 @@
+void bt_app_main(void);
