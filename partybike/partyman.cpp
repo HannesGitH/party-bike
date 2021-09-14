@@ -16,7 +16,7 @@ int bufferOffset(uint16_t stripnum){
 
 Partyman::Partyman()
 {
-    //initialize_strips(strips);
+    initialize_strips(strips);
     Serial.println("partymaaaan");
     return;
 }

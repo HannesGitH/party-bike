@@ -13,7 +13,7 @@ struct EffectWithArg {
 class Partyman
 {
 private:
-    led_strip_t strips[];
+    led_strip_t strips[amount_strips];
 public:
     void runEffects(EffectWithArg effects[]);
     void sendBuffer(irgb_t buffer[LENGTH_TOTAL]);

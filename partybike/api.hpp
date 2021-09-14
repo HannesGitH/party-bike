@@ -9,7 +9,7 @@
 class Api
 {
 private:
-    //Partyman pm = Partyman();
+    Partyman pm = Partyman();
     bool locked = true;
     BluetoothSerial SerialBT;
     void custom();

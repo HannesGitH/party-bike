@@ -1,6 +1,7 @@
 
 #include "led_strip.h"
-#include "freertos/task.h"
+//#include "freertos/task.h"
+#include <Arduino.h>
 
 #include <string.h>
 
@@ -63,31 +64,45 @@ static void led_strip_fill_rmt_items_ws2812(irgb_t *led_strip_buf, rmt_item32_t 
 
 static void led_strip_task(void *arg)
 {
+    Serial.println("debug1");
     struct led_strip_t *led_strip = (struct led_strip_t *)arg;
     led_fill_rmt_items_fn led_make_waveform = NULL;
     bool make_new_rmt_items = true;
+    Serial.println("debug2");
 
     size_t num_items_malloc = (LED_STRIP_NUM_RMT_ITEMS_PER_LED * led_strip->led_strip_length);
     rmt_item32_t *rmt_items = (rmt_item32_t*) malloc(sizeof(rmt_item32_t) * num_items_malloc);
+    Serial.println("debug3");
     if (!rmt_items) {
+    Serial.println("debug4");
         vTaskDelete(NULL);
     }
 
+    Serial.println("debug5");
     led_make_waveform = led_strip_fill_rmt_items_ws2812;
 
+    Serial.println("debug6");
     for(;;) {
+        Serial.println("debug10");
         configASSERT(led_strip->access_semaphore);
+        Serial.println("debug11");
         rmt_wait_tx_done(led_strip->rmt_channel, portMAX_DELAY);
-        xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
+        Serial.println("debug111");
+        xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY); //this throws (xQueueGenericReceive)- assert failed!
 
+        Serial.println("debug112");
         make_new_rmt_items = true;
 
+        Serial.println("debug12");
         if (make_new_rmt_items) {
+        Serial.println("debug13");
             led_make_waveform(led_strip->led_strip_buf, rmt_items, led_strip->led_strip_length);
         }
 
+        Serial.println("debug14");
         rmt_write_items(led_strip->rmt_channel, rmt_items, num_items_malloc, false);
         xSemaphoreGive(led_strip->access_semaphore);
+        Serial.println("debug15");
         vTaskDelay(LED_STRIP_REFRESH_PERIOD_MS / portTICK_PERIOD_MS);
     }
 
@@ -114,8 +129,8 @@ static bool led_strip_init_rmt(struct led_strip_t *led_strip)
         .clk_div = LED_STRIP_RMT_CLK_DIV,
         .gpio_num = led_strip->gpio,
         .mem_block_num = 1,
-        //.tx_config = tx_cfg //TODO ?
     };
+    rmt_cfg.tx_config = tx_cfg;
 
     esp_err_t cfg_ok = rmt_config(&rmt_cfg);
     if (cfg_ok != ESP_OK) {
