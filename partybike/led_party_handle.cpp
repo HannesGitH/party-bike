@@ -35,6 +35,7 @@ bool init_new_strip(led_strip_t * led_strip_p, gpio_num_t strip_data_pin, uint l
 void initialize_strips(led_strip_t * strips){
     for(int i=0; i<amount_strips; i++){
         init_new_strip(strips+i,strip_pins[i],strip_lengths[i],i);
+        vTaskDelay(1);
     }
 }
 void led_strips_clear(led_strip_t * strips){
