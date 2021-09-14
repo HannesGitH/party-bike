@@ -1,5 +1,6 @@
 #if !defined(MATH_HPP)
 #define MATH_HPP
+#include "freertos/FreeRTOS.h"
 
 #define max(a,b) ((a) > (b) ? (a) : (b))
 

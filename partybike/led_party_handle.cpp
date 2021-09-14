@@ -1,6 +1,7 @@
 #include "stripdata.hpp"
 #include "effects.hpp"
 #include "led_party_handle.hpp"
+#include "freertos/FreeRTOS.h"
 
 const xSemaphoreHandle mutexies[] = {
     xSemaphoreCreateBinary(),
@@ -45,39 +46,39 @@ void led_strips_clear(led_strip_t * strips){
 
 
 
-//MARK currently depricated
-void led_party_task(void *arg){
+// //MARK currently depricated
+// void led_party_task(void *arg){
 
-    //apperently haben alle dieselbe adresse?
-    //led_strip_t * strips = (led_strip_t *) malloc(amount_strips*sizeof(led_strip_t));
-    led_strip_t strips[amount_strips];
+//     //apperently haben alle dieselbe adresse?
+//     //led_strip_t * strips = (led_strip_t *) malloc(amount_strips*sizeof(led_strip_t));
+//     led_strip_t strips[amount_strips];
 
-    initialize_strips(strips);
+//     initialize_strips(strips);
 
-    irgb_t the_bestest_color = {.g=255,.b=255};
-    uint8_t length_for_rgb_stripe = 0;
+//     irgb_t the_bestest_color = {.g=255,.b=255};
+//     uint8_t length_for_rgb_stripe = 0;
     
 
-    void ** extra_effect_args = (void**) malloc(sizeof(void*)*10);
+//     void ** extra_effect_args = (void**) malloc(sizeof(void*)*10);
 
-    extra_effect_args[1]=&length_for_rgb_stripe;
+//     extra_effect_args[1]=&length_for_rgb_stripe;
 
-    drive_effect(strips,50,effects[2]);
-    irgb_t addCol = {.r=0x12,.g=0x34,.b=0x56};
-    for(uint32_t running_value = 0;1;++running_value)
-    {
-        the_bestest_color+=addCol;
-        //drive_effect(strips,50,effect_walk_pixel,&the_bestest_color);
-        //drive_effect(strips,50,effect_walking_colorline,&running_value);
-        length_for_rgb_stripe = running_value;
-        drive_effects(strips,50,effects+3,2,extra_effect_args+3,false); 
-        //drive_effect(strips,50,effects[2]);
-        //drive_effect(strips,50,effect_walking_colorline,effect_streetlight);
-        //drive_effect(strips,30,effects[3]);
-        led_strips_clear(strips);
-        //led_strip_set_pixel_color(strips+DIAG,running_value%LENGTH_DIAG,(running_value%3)*0xFF3456);
-        //led_strip_set_pixel_color(strips+MAIN,running_value%strip_lengths[MAIN],0x10743C);
-        //led_strip_set_pixel_color(strips+MAIN,(running_value-1)%strip_lengths[MAIN],0xFF44CC);
-        //vTaskDelay(1000 / portTICK_PERIOD_MS);
-    }
-}
+//     drive_effect(strips,50,effects[2]);
+//     irgb_t addCol = {.r=0x12,.g=0x34,.b=0x56};
+//     for(uint32_t running_value = 0;1;++running_value)
+//     {
+//         the_bestest_color+=addCol;
+//         //drive_effect(strips,50,effect_walk_pixel,&the_bestest_color);
+//         //drive_effect(strips,50,effect_walking_colorline,&running_value);
+//         length_for_rgb_stripe = running_value;
+//         drive_effects(strips,50,effects+3,2,extra_effect_args+3,false); 
+//         //drive_effect(strips,50,effects[2]);
+//         //drive_effect(strips,50,effect_walking_colorline,effect_streetlight);
+//         //drive_effect(strips,30,effects[3]);
+//         led_strips_clear(strips);
+//         //led_strip_set_pixel_color(strips+DIAG,running_value%LENGTH_DIAG,(running_value%3)*0xFF3456);
+//         //led_strip_set_pixel_color(strips+MAIN,running_value%strip_lengths[MAIN],0x10743C);
+//         //led_strip_set_pixel_color(strips+MAIN,(running_value-1)%strip_lengths[MAIN],0xFF44CC);
+//         //vTaskDelay(1000 / portTICK_PERIOD_MS);
+//     }
+// }

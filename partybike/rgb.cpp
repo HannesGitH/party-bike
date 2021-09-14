@@ -1,4 +1,8 @@
 #include "rgb.h"
+#include "math.hpp"
+#include "math.h"
+#include <stddef.h>
+#include "freertos/FreeRTOS.h"
 
 irgb_t iRGB
 (

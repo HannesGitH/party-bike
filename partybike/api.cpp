@@ -27,7 +27,7 @@ void Api::run(){
 
     if (command == "lock")locked = true;
     else if (command == "custom")custom();
-    else if (command.substring(0,7)=="effects")effects(command.substring(8));
+    else if (command.substring(0,7)=="effects")effectsrun(command.substring(8));
     else SerialBT.printf("\"%s\" not supported\n",command);
   } 
 };
@@ -55,6 +55,6 @@ void Api::sendBuffer(irgb_t * buffer){
   pm.sendBuffer(buffer);
 }
 
-void Api::effects(String restcommand){
+void Api::effectsrun(String effectstr){
   return; //TODO
 }

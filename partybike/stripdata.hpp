@@ -1,4 +1,4 @@
-
+#include "freertos/FreeRTOS.h"
 
 #ifndef STRIPDATA_HPP
 #define STRIPDATA_HPP

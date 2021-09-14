@@ -2,6 +2,16 @@
 #include "led_party_handle.hpp"
 #include "effects.hpp"
 #include "math.hpp"
+#include <algorithm>
+
+int bufferOffset(uint16_t stripnum){
+    uint16_t acc = 0;
+    for (uint8_t i = 0; i < stripnum; i++)
+    {
+        acc+=strip_lengths[i];
+    }
+    return acc;
+}
 
 Partyman::Partyman()
 {
@@ -12,9 +22,9 @@ Partyman::~Partyman()
 {
 }
 
-void Partyman::runEffects(effectWithArg effects[]){
+void Partyman::runEffects(EffectWithArg effects[]){
     int arrLength = sizeof(effects)/sizeof(effects[0]);
-    effect effs[arrLength];
+    Effect effs[arrLength];
     void * args[arrLength];
     for(int i = 0; i<sizeof(effects)/sizeof(effects[0]) ;i++){
         effs[i]=*(effects[i].eff);
@@ -31,15 +41,6 @@ void Partyman::sendBuffer(irgb_t buffer[LENGTH_TOTAL]){
             }
         }
     }
-}
-
-int bufferOffset(uint16_t stripnum){
-    uint16_t acc = 0;
-    for (uint8_t i = 0; i < stripnum; i++)
-    {
-        acc+=strip_lengths[i];
-    }
-    return acc;
 }
 
 

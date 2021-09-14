@@ -1,15 +1,18 @@
 #include "effects.hpp"
+//#include <stddef.h>
 #include "stripdata.hpp"
 #include "math.hpp"
+#include "math.h"
+//#include "freertos/FreeRTOS.h"
 
-void drive_effect(led_strip_t * strips,uint step_millis, struct effect effect, void * extra_args_p){
+void drive_effect(led_strip_t * strips,uint step_millis, Effect effect, void * extra_args_p){
     for(int step=0;step<effect.repetitions;step++){
         effect.draw(strips,step,extra_args_p);
-        vTaskDelay(step_millis / portTICK_PERIOD_MS);
+        //vTaskDelay(step_millis / portTICK_PERIOD_MS);//TODO why is this not declared in this scope?!
     }
 }
 
-void drive_effects(led_strip_t * strips,uint step_millis, effect * effects, uint8_t amount, void * extra_args_p[], bool run_all_in_every_step){
+void drive_effects(led_strip_t * strips,uint step_millis, Effect * effects, uint8_t amount, void * extra_args_p[], bool run_all_in_every_step){
     uint32_t max_reps = 0;
     for (uint16_t i = 0; i < amount; i++)
     {
@@ -23,7 +26,7 @@ void drive_effects(led_strip_t * strips,uint step_millis, effect * effects, uint
             //printf("%d effect argument %d points to %d\n",i,(int)extra_args_p[i],*(uint8_t*) extra_args_p[i]);
             effects[i].draw(strips,step, extra_args_p ? extra_args_p[i] : NULL);
         }
-        vTaskDelay(step_millis / portTICK_PERIOD_MS);
+        //vTaskDelay(step_millis / portTICK_PERIOD_MS);//TODO why is this not declared in this scope?!
     }
 }
 
@@ -110,11 +113,11 @@ void effect_walk_pixel_draw(led_strip_t * strips, uint32_t step, void* extra_arg
     remove_iterated_pixel(strips, step, extra_args_p);
 }
 
-effect effect_walk_pixel{
+Effect effect_walk_pixel{
     .repetitions = LENGTH_MAIN_L+LENGTH_SDDL+LENGTH_DIAG_L+1,
     .draw = effect_walk_pixel_draw
 };
-effect effect_spread_pixel{
+Effect effect_spread_pixel{
     .repetitions = LENGTH_MAIN,
     .draw = effect_spread_pixel_draw  
 };
@@ -130,7 +133,7 @@ void effect_walking_colorline_draw(led_strip_t * strips, uint32_t step, void* ex
     }
 }
 
-effect effect_walking_colorline{
+Effect effect_walking_colorline{
     .repetitions = LENGTH_MAIN_L+LENGTH_SDDL+LENGTH_DIAG_L+1,
     .draw = effect_walking_colorline_draw
 };
@@ -181,7 +184,7 @@ void effect_streetlight_draw(led_strip_t * strips, uint32_t step, void* bool__tu
     led_strip_set_pixel_color(strips+FRNT,LENGTH_FRNT-3,(irgb_t){.r = 0xFF,.g = 0x00,.b = 0x00,});
 }
 
-effect effect_streetlight{
+Effect effect_streetlight{
     .repetitions = 1,
     .draw = effect_streetlight_draw
 };
@@ -199,7 +202,7 @@ void effect_init_rainbow_draw(led_strip_t * strips, uint32_t step, void* total_h
     }
 }
 
-effect effect_init_rainbow{
+Effect effect_init_rainbow{
     .repetitions = 1,
     .draw = effect_init_rainbow_draw
 };
@@ -216,7 +219,7 @@ void effect_change_hue_draw(led_strip_t * strips, uint32_t step, void* hue_rotat
     }
 }
 
-effect effect_change_hue{
+Effect effect_change_hue{
     .repetitions = 360,
     .draw = effect_change_hue_draw
 };

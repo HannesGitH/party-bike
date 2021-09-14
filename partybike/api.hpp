@@ -13,7 +13,7 @@ private:
     bool locked = true;
     BluetoothSerial SerialBT;
     void custom();
-    void effects(String effects);
+    void effectsrun(String effectstr);
     void sendBuffer(irgb_t buffer[LENGTH_TOTAL]);
 public:
     Api(String name);
