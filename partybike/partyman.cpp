@@ -3,6 +3,7 @@
 #include "effects.hpp"
 #include "math.hpp"
 #include <algorithm>
+#include <Arduino.h>
 
 int bufferOffset(uint16_t stripnum){
     uint16_t acc = 0;
@@ -15,7 +16,9 @@ int bufferOffset(uint16_t stripnum){
 
 Partyman::Partyman()
 {
-    initialize_strips(strips);
+    //initialize_strips(strips);
+    Serial.println("partymaaaan");
+    return;
 }
 
 Partyman::~Partyman()

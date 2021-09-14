@@ -5,7 +5,7 @@
 void mainTask(void * params){
   Api api("Partybike");
   for(;;){
-    //api.run();
+    api.run();
     vTaskDelay(25/portTICK_PERIOD_MS);
   }
 }
@@ -23,6 +23,6 @@ void setup() {
 }
 
 void loop() {
-    //Serial.println("im still alive!");
+    Serial.println("im still alive!");
     vTaskDelay(25000/portTICK_PERIOD_MS);
 }

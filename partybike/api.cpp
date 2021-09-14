@@ -1,5 +1,5 @@
 
-#define PASS "123454321"
+#define PASS "passwot"
 
 #include "api.hpp"
 #include "rgb.h"
@@ -17,6 +17,7 @@ void Api::run(){
     
   if (SerialBT.available()) {
     String command = SerialBT.readString();
+    command = command.substring(0,command.length()-2);
     
     if(command == PASS){
         locked = false;
@@ -29,7 +30,8 @@ void Api::run(){
     else if (command == "custom")custom();
     else if (command.substring(0,7)=="effects")effectsrun(command.substring(8));
     else SerialBT.printf("\"%s\" not supported\n",command);
-  } 
+  }
+  return; 
 };
 
 void Api::custom(){
@@ -52,7 +54,7 @@ void Api::custom(){
   }
 }
 void Api::sendBuffer(irgb_t * buffer){
-  pm.sendBuffer(buffer);
+  //pm.sendBuffer(buffer);
 }
 
 void Api::effectsrun(String effectstr){
