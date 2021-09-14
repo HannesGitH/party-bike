@@ -7,6 +7,20 @@
 Api::Api(String name)
 {
     SerialBT.begin(name);
+
+    // std::pair<char, EffectWithArg> tmp[] =
+    // {
+    //     { 'w', {.eff = &effect_walk_pixel        , .arg = NULL } },
+    //     { 's', {.eff = &effect_spread_pixel      , .arg = NULL } },
+    //     { 'W', {.eff = &effect_walking_colorline , .arg = NULL } },
+    //     { 'S', {.eff = &effect_streetlight       , .arg = NULL } },
+    //     { 'r', {.eff = &effect_init_rainbow      , .arg = NULL } },
+    //     { 'h', {.eff = &effect_change_hue        , .arg = NULL } }
+    // };
+    // for(std::pair<char, EffectWithArg> p : tmp )
+    // {
+    //   possible_effects[p.first]=p.second;
+    // }
 }
 
 Api::~Api()
@@ -54,9 +68,26 @@ void Api::custom(){
   }
 }
 void Api::sendBuffer(irgb_t * buffer){
-  //pm.sendBuffer(buffer);
+  pm.sendBuffer(buffer);
 }
 
+#include <map>
+#include "effects.hpp"
+
 void Api::effectsrun(String effectstr){
+  EffectWithArg effects_to_run[effectstr.length()];
+  uint8_t i=0;
+  for (char c : effectstr)
+  {
+    if(false){}
+    else if(c=='w'){effects_to_run[i]={.eff = &effect_walk_pixel        , .arg = NULL }; }
+    else if(c=='s'){effects_to_run[i]={.eff = &effect_spread_pixel      , .arg = NULL }; }
+    else if(c=='W'){effects_to_run[i]={.eff = &effect_walking_colorline , .arg = NULL }; }
+    else if(c=='S'){effects_to_run[i]={.eff = &effect_streetlight       , .arg = NULL }; }
+    else if(c=='r'){effects_to_run[i]={.eff = &effect_init_rainbow      , .arg = NULL }; }
+    else if(c=='h'){effects_to_run[i]={.eff = &effect_change_hue        , .arg = NULL }; }
+    i++;
+  }
+  pm.runEffects(effects_to_run);
   return; //TODO
 }
