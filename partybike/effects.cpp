@@ -3,12 +3,13 @@
 #include "stripdata.hpp"
 #include "math.hpp"
 #include "math.h"
+#include <Arduino.h>
 //#include "freertos/FreeRTOS.h"
 
 void drive_effect(led_strip_t * strips,uint step_millis, Effect effect, void * extra_args_p){
     for(int step=0;step<effect.repetitions;step++){
         effect.draw(strips,step,extra_args_p);
-        //vTaskDelay(step_millis / portTICK_PERIOD_MS);//TODO why is this not declared in this scope?!
+        vTaskDelay(step_millis / portTICK_PERIOD_MS);
     }
 }
 
@@ -17,16 +18,18 @@ void drive_effects(led_strip_t * strips,uint step_millis, Effect * effects, uint
     for (uint16_t i = 0; i < amount; i++)
     {
         max_reps = max(max_reps,effects[i].repetitions);
+        // Serial.println(effects[i].repetitions);
+        // Serial.println(max_reps);
     }
     
     for(int step=0;step<max_reps;step++){
         for (uint16_t i = 0; i < amount; i++)
         {
+            // Serial.printf("step %d, strip %d \n",step, i);
             if(run_all_in_every_step || effects[i].repetitions < step)
-            //printf("%d effect argument %d points to %d\n",i,(int)extra_args_p[i],*(uint8_t*) extra_args_p[i]);
             effects[i].draw(strips,step, extra_args_p ? extra_args_p[i] : NULL);
         }
-        //vTaskDelay(step_millis / portTICK_PERIOD_MS);//TODO why is this not declared in this scope?!
+        vTaskDelay(step_millis / portTICK_PERIOD_MS);
     }
 }
 
@@ -191,6 +194,7 @@ Effect effect_streetlight{
 
 
 void effect_init_rainbow_draw(led_strip_t * strips, uint32_t step, void* total_hue_rotations_p){
+    //Serial.println("rainbowing");
     int total_hue_rotations = 2;//total_hue_rotations_p ? *(int*) total_hue_rotations_p : 1;
     uint8_t pixels = LENGTH_MAIN_L+LENGTH_DIAG_L+LENGTH_SDDL;
     float hue_change = fmod(360*(((float)total_hue_rotations)/pixels),360);

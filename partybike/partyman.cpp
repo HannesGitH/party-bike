@@ -18,6 +18,8 @@ Partyman::Partyman()
 {
     initialize_strips(strips);
     Serial.println("partymaaaan");
+    
+    drive_effect(strips,50,effect_walk_pixel);
     return;
 }
 
@@ -25,15 +27,21 @@ Partyman::~Partyman()
 {
 }
 
-void Partyman::runEffects(EffectWithArg effects[]){
-    int arrLength = sizeof(effects)/sizeof(effects[0]);
+void Partyman::runEffects(EffectWithArg effects[],uint8_t len){
+    int arrLength = len;//sizeof(effects)/sizeof(effects[0]);
+    // Serial.println(effects[0].eff->repetitions);
     Effect effs[arrLength];
     void * args[arrLength];
-    for(int i = 0; i<sizeof(effects)/sizeof(effects[0]) ;i++){
+    for(int i = 0; i<arrLength ;i++){
         effs[i]=*(effects[i].eff);
+        // Serial.println(effects[i].eff->repetitions);
+        // Serial.println((*(effects[i].eff)).repetitions);
+        // Serial.println(effs[i].repetitions);
         args[0]=effects[0].arg;
     }
-    drive_effects(strips,20,effs,arrLength,args,false); 
+    // Serial.println(arrLength);
+    drive_effects(strips,20,&effs[0],arrLength,args,false); 
+    Serial.println("drove em");return;
 }
 
 void Partyman::sendBuffer(irgb_t buffer[LENGTH_TOTAL]){

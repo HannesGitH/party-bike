@@ -15,7 +15,7 @@ class Partyman
 private:
     led_strip_t strips[amount_strips];
 public:
-    void runEffects(EffectWithArg effects[]);
+    void runEffects(EffectWithArg effects[],uint8_t len);
     void sendBuffer(irgb_t buffer[LENGTH_TOTAL]);
     Partyman(/* args */);
     ~Partyman();
