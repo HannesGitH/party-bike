@@ -1,13 +1,7 @@
-#include <stdio.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "driver/gpio.h"
-#include "sdkconfig.h"
-#include "freertos/semphr.h"
-#include "rgb.h"
 
-#ifndef PARTYMAN_H
-#define PARTYMAN_H
+
+#ifndef STRIPDATA_HPP
+#define STRIPDATA_HPP
 
 #define DATA_PIN_MAIN GPIO_NUM_13 //main60 //draws way to much power so esp overheats and crashes usb connection
 #define LENGTH_MAIN_L 30U
@@ -32,7 +26,7 @@
 #define LENGTH_REAR_B 10U
 
 
-#define LENGTH_TOTAL LENGTH_MAIN+LENGTH_DIAH+LENGTH_FRNT+LENGTH_SDDL+LENGTH_REAR
+#define LENGTH_TOTAL LENGTH_MAIN+LENGTH_DIAG+LENGTH_FRNT+LENGTH_SDDL+LENGTH_REAR_B
 
 
 #define amount_strips 5
