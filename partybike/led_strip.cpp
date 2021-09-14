@@ -13,7 +13,7 @@
 #define LED_STRIP_NUM_RMT_ITEMS_PER_LED (24U) // Assumes 24 bit color for each led
 
 // RMT Clock source is @ 80 MHz. Dividing it by 8 gives us 10 MHz frequency, or 100ns period.
-#define LED_STRIP_RMT_CLK_DIV (8)
+#define LED_STRIP_RMT_CLK_DIV (4) // TODO XXX hier iwas? 4 machte schonmal mehr als 8 was eigtl unlogisch ist, wird das RMT peripheral vllt schon anderwaltig (zb durch BTSerial) verwendet?
 
 /****************************
         WS2812 Timing

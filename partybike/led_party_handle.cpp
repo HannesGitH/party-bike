@@ -1,4 +1,5 @@
 #include "stripdata.hpp"
+#include "led_strip.h"
 #include "effects.hpp"
 #include "led_party_handle.hpp"
 #include <Arduino.h>

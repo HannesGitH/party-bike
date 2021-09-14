@@ -2,6 +2,7 @@
 #include "led_party_handle.hpp"
 #include "effects.hpp"
 #include "math.hpp"
+#include "led_strip.h"
 #include <algorithm>
 #include <Arduino.h>
 
