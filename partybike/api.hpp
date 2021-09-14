@@ -1,16 +1,19 @@
 #if !defined(API_HPP)
 #define API_HPP
 
-#include "../misc/rgb.h"
+#include "rgb.h"
 #include "BluetoothSerial.h"
-#include "../led_party/stripdata.hpp"
+#include "stripdata.hpp"
+#include "partyman.hpp"
 
 class Api
 {
 private:
+    Partyman pm;
     bool locked = true;
     BluetoothSerial SerialBT;
     void custom();
+    void effects(String effects);
     void sendBuffer(irgb_t buffer[LENGTH_TOTAL]);
 public:
     Api(String name);

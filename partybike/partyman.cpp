@@ -1,7 +1,7 @@
 #include "partyman.hpp"
 #include "led_party_handle.hpp"
 #include "effects.hpp"
-#include "../misc/math.hpp"
+#include "math.hpp"
 
 Partyman::Partyman()
 {
@@ -17,7 +17,7 @@ void Partyman::runEffects(effectWithArg effects[]){
     effect effs[arrLength];
     void * args[arrLength];
     for(int i = 0; i<sizeof(effects)/sizeof(effects[0]) ;i++){
-        effs[i]=*(effects[i].effect);
+        effs[i]=*(effects[i].eff);
         args[0]=effects[0].arg;
     }
     drive_effects(strips,20,effs,arrLength,args,false); 

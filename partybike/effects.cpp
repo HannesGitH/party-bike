@@ -1,6 +1,6 @@
 #include "effects.hpp"
 #include "stripdata.hpp"
-#include "../misc/math.hpp"
+#include "math.hpp"
 
 void drive_effect(led_strip_t * strips,uint step_millis, struct effect effect, void * extra_args_p){
     for(int step=0;step<effect.repetitions;step++){

@@ -1,4 +1,4 @@
-#include "bt/api.hpp"
+#include "api.hpp"
 
 BluetoothSerial serialBT;
 

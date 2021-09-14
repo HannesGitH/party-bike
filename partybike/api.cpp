@@ -2,7 +2,7 @@
 #define PASS "123454321"
 
 #include "api.hpp"
-#include "../misc/rgb.h"
+#include "rgb.h"
 
 Api::Api(String name)
 {
@@ -27,6 +27,8 @@ void Api::run(){
 
     if (command == "lock")locked = true;
     else if (command == "custom")custom();
+    else if (command.substring(0,7)=="effects")effects(command.substring(8));
+    else SerialBT.printf("\"%s\" not supported\n",command);
   } 
 };
 
@@ -45,6 +47,14 @@ void Api::custom(){
       if(next.i == 0xFF)nonStop=false;  //custom animation end
       buffer[i] = next;
     }
+    sendBuffer(buffer);
     vTaskDelay(20 / portTICK_PERIOD_MS);
   }
+}
+void Api::sendBuffer(irgb_t * buffer){
+  pm.sendBuffer(buffer);
+}
+
+void Api::effects(String restcommand){
+  return; //TODO
 }

@@ -1,12 +1,12 @@
 #if !defined(PARTYMAN_HPP)
 #define PARTYMAN_HPP
 
-#include "../led_strip/led_strip.h"
+#include "led_strip.h"
 #include "effects.hpp"
-#include "../misc/rgb.h"
+#include "rgb.h"
 
 struct effectWithArg {
-    effect * effect;
+    effect * eff;
     void * arg;
 };
 

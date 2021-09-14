@@ -24,14 +24,7 @@ struct irgb_t
     irgb_t& operator +=(const irgb_t& a){return *this+a;}
 };
 
-irgb_t fromarray(uint8_t v4[4]) {
-    return {
-        .r = v4[0],
-        .g = v4[1],
-        .b = v4[2],
-        .i = v4[3]
-    };
-}
+irgb_t fromarray(uint8_t v4[4]);
 
 irgb_t iRGB
 (

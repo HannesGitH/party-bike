@@ -9,7 +9,7 @@ extern "C" {
 #include <driver/gpio.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
-#include "../misc/rgb.h"
+#include "rgb.h"
 
 #include <stddef.h>
 

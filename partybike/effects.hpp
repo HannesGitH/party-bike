@@ -1,5 +1,5 @@
 #include <stddef.h>
-#include "../led_strip/led_strip.h"
+#include "led_strip.h"
 #include "stripdata.hpp"
 #ifndef EFFECTS_H
 #ifdef __cplusplus

@@ -14,6 +14,15 @@ irgb_t iRGB
     };
 }
 
+irgb_t fromarray(uint8_t v4[4]) {
+    return {
+        .r = v4[0],
+        .g = v4[1],
+        .b = v4[2],
+        .i = v4[3]
+    };
+}
+
 irgb_t invert(irgb_t iRGB){
     return {
         .r = iRGB.r ^ 0xFF,
