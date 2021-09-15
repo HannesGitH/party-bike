@@ -25,7 +25,7 @@ void drive_effects(led_strip_t * strips,uint step_millis, Effect * effects, uint
     for(int step=0;step<max_reps;step++){
         for (uint16_t i = 0; i < amount; i++)
         {
-            Serial.printf("step %d, strip %d \n",step, i);
+            //Serial.printf("step %d, effect %d \n",step, i);
             if(run_all_in_every_step || effects[i].repetitions < step)
             effects[i].draw(strips,step, extra_args_p ? extra_args_p[i] : NULL);
         }
@@ -46,34 +46,36 @@ void effect_spread_pixel_draw(led_strip_t * strips, uint32_t step, void* extra_a
 void draw_iterated_pixel(led_strip_t * strips, uint32_t step, void* extra_args_p){
     irgb_t walking_color = extra_args_p ? *(irgb_t*) extra_args_p : (irgb_t)iRGB(0xFF,0x44,0xCC);
 
-    if(step<LENGTH_MAIN_L){
-        //main_r
-        led_strip_addto_pixel_color(strips+MAIN,step,walking_color);
-        //main_l
-        led_strip_addto_pixel_color(strips+MAIN,strip_lengths[MAIN]-LENGTH_REAR_T-step-1,walking_color);
-        //rear_t
-        led_strip_addto_pixel_color(strips+MAIN,strip_lengths[MAIN]-LENGTH_REAR_T+step,walking_color);
-    }
+    // if(step<LENGTH_MAIN_L){
+    //     //main_r
+    //     led_strip_addto_pixel_color(strips+MAIN,step,walking_color);
+    //     //main_l
+    //     led_strip_addto_pixel_color(strips+MAIN,strip_lengths[MAIN]-LENGTH_REAR_T-step-1,walking_color);
+    //     //rear_t
+    //     led_strip_addto_pixel_color(strips+MAIN,strip_lengths[MAIN]-LENGTH_REAR_T+step,walking_color);
+    // }
 
     if (LENGTH_MAIN_L<step&&step<(LENGTH_MAIN_L+LENGTH_DIAG_L+1))
     {
+        
         uint32_t step2=step-LENGTH_MAIN_L;
+        Serial.printf("-> (%d->%d)\t {r: %d g:%d b: %d}\n", step,LENGTH_DIAG_R-step2, walking_color.r, walking_color.g, walking_color.b);
         //diag_r
         led_strip_addto_pixel_color(strips+DIAG,LENGTH_DIAG_R-step2,walking_color);
-        //diag_l
-        led_strip_addto_pixel_color(strips+DIAG,LENGTH_DIAG_R+step2-1,walking_color);
-        //frnt
-        led_strip_addto_pixel_color(strips+FRNT,step2+3,walking_color);
+        // //diag_l
+        // led_strip_addto_pixel_color(strips+DIAG,LENGTH_DIAG_R+step2-1,walking_color);
+        // //frnt
+        // led_strip_addto_pixel_color(strips+FRNT,step2+3,walking_color);
     }  
     
-    if (LENGTH_MAIN_L+LENGTH_DIAG_L<step&&step<LENGTH_MAIN_L+LENGTH_DIAG_L+LENGTH_SDDL)
-    {
-        uint32_t step3=step-(LENGTH_MAIN_L+LENGTH_DIAG_L);
-        //sddl
-        led_strip_addto_pixel_color(strips+SDDL,LENGTH_SDDL-step3,walking_color);
-        //rear_b
-        led_strip_addto_pixel_color(strips+REAR,LENGTH_REAR_B-step3,walking_color);
-    }
+    // if (LENGTH_MAIN_L+LENGTH_DIAG_L<step&&step<LENGTH_MAIN_L+LENGTH_DIAG_L+LENGTH_SDDL)
+    // {
+    //     uint32_t step3=step-(LENGTH_MAIN_L+LENGTH_DIAG_L);
+    //     //sddl
+    //     led_strip_addto_pixel_color(strips+SDDL,LENGTH_SDDL-step3,walking_color);
+    //     //rear_b
+    //     led_strip_addto_pixel_color(strips+REAR,LENGTH_REAR_B-step3,walking_color);
+    // }
 
 }
 
@@ -202,6 +204,7 @@ void effect_init_rainbow_draw(led_strip_t * strips, uint32_t step, void* total_h
     for (uint8_t i = 0; i < pixels; i++)
     {
         irgb_t current_color = change_hue(color,i*hue_change);
+        Serial.printf("turning pixel \t %d \t into {r: %d g:%d b: %d}\t", i, current_color.r, current_color.g, current_color.b);
         draw_iterated_pixel(strips,i,&current_color);
     }
 }

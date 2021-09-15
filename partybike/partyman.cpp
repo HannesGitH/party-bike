@@ -22,7 +22,7 @@ Partyman::Partyman()
     Serial.println("partymaaaan");
     
     //drive_effect(strips,50,effect_walk_pixel);
-    //test();
+    test();
     return;
 }
 
@@ -60,10 +60,10 @@ void Partyman::sendBuffer(irgb_t buffer[LENGTH_TOTAL]){
 }
 
 void Partyman::test(){
-    const uint8_t factor = 2;
+    /*
     for (uint16_t i = 0; i < LENGTH_TOTAL; i++)
     {
-        fullbuf[i]=iRGB(0x90*i,0x03*i,134);
+        fullbuf[i]=change_hue(iRGB(0xF0,0x0F,0x00),(float)i*7.8);
     }
     sendBuffer(fullbuf);
     for (uint16_t i = 0; i < LENGTH_TOTAL; i++)
@@ -71,9 +71,23 @@ void Partyman::test(){
         fullbuf[i]={.r=0x00, .g=0x00, .b=0x00, .i=0x00};
     }
     vTaskDelay(2000 / portTICK_PERIOD_MS);
-    sendBuffer(fullbuf);
-    //drive_effect(strips,50,effect_init_rainbow);
+    sendBuffer(fullbuf);*/
+    drive_effect(strips,50,effect_init_rainbow);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 const uint8_t LED_STRIP_RMT_INTR_NUMs[] = {9, 12, 13, 17, 18, 19, 20, 21, 23};

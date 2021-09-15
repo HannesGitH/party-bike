@@ -184,6 +184,7 @@ bool led_strip_set_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num
 
     xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
     led_strip->led_strip_buf[pixel_num] = color;
+    //Serial.printf("turning pixel %d into {r: %d g:%d b: %d}\n", pixel_num, color.r, color.g, color.b);
     xSemaphoreGive(led_strip->access_semaphore);
 
     return set_led_success;
@@ -212,7 +213,8 @@ bool led_strip_addto_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_n
 {
     irgb_t current_color;
     if (led_strip_get_pixel_color(led_strip,pixel_num,&current_color))
-    {
+    {   
+        Serial.printf("coloring %d\t%d with \t {r: %d g:%d b: %d}\t+\t{r: %d g:%d b: %d}\t=\t{r: %d g:%d b: %d}\n", led_strip ,pixel_num, current_color.r, current_color.g, current_color.b, color.r,  color.g,  color.b,(color+current_color).r, (color+current_color).g, (color+current_color).b);
         return led_strip_set_pixel_color(led_strip,pixel_num,color+current_color);
     }
     return false;

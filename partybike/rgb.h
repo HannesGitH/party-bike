@@ -16,9 +16,9 @@ struct irgb_t
     
     irgb_t& operator +(const irgb_t& a)
     {
-        r = a.r;
-        g = a.g;
-        b = a.b;    
+        r += a.r;
+        g += a.g;
+        b += a.b;    
         return *this;
     }
     irgb_t& operator +=(const irgb_t& a){return *this+a;}
