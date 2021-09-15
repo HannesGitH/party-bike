@@ -1,5 +1,4 @@
 #include "partyman.hpp"
-#include "led_party_handle.hpp"
 #include "effects.hpp"
 #include "math.hpp"
 #include "led_strip.h"
@@ -18,11 +17,12 @@ int bufferOffset(uint16_t stripnum){
 Partyman::Partyman()
 { 
     fullbuf = (irgb_t *) malloc(LENGTH_TOTAL*sizeof(irgb_t));
+    mutexies = (xSemaphoreHandle *) malloc(LENGTH_TOTAL*sizeof(xSemaphoreHandle));
     initialize_strips(strips);
     Serial.println("partymaaaan");
     
     //drive_effect(strips,50,effect_walk_pixel);
-    test();
+    //test();
     return;
 }
 
@@ -60,9 +60,10 @@ void Partyman::sendBuffer(irgb_t buffer[LENGTH_TOTAL]){
 }
 
 void Partyman::test(){
+    const uint8_t factor = 2;
     for (uint16_t i = 0; i < LENGTH_TOTAL; i++)
     {
-        fullbuf[i]={.r=0xFF, .g=0xFF, .b=0xFF, .i=0x00};
+        fullbuf[i]=iRGB(0x90*i,0x03*i,134);
     }
     sendBuffer(fullbuf);
     for (uint16_t i = 0; i < LENGTH_TOTAL; i++)
@@ -71,8 +72,44 @@ void Partyman::test(){
     }
     vTaskDelay(2000 / portTICK_PERIOD_MS);
     sendBuffer(fullbuf);
-    //drive_effect(strips,50,effect_init_rainbow,NULL);
+    //drive_effect(strips,50,effect_init_rainbow);
 }
+
+
+const uint8_t LED_STRIP_RMT_INTR_NUMs[] = {9, 12, 13, 17, 18, 19, 20, 21, 23};
+bool Partyman::init_new_strip(led_strip_t * led_strip_p, gpio_num_t strip_data_pin, uint length, uint8_t channel){
+    irgb_t* led_strip_buf = (irgb_t *) malloc(length*sizeof(irgb_t)); //normales array ist nicht gut weil er dann die adresse recycled, aber cool wenn man den programmspeicer als farben zeigen will
+    *led_strip_p = {
+        .led_strip_length = length,
+        .gpio = strip_data_pin,
+        .rmt_channel = (rmt_channel_t) channel,
+        .rmt_interrupt_num = LED_STRIP_RMT_INTR_NUMs[channel],
+        .led_strip_buf = led_strip_buf,
+    };
+    led_strip_p->access_semaphore=mutexies[channel];
+    bool led_init_ok = led_strip_init(led_strip_p);
+    led_strip_clear(led_strip_p);
+    if (led_init_ok){
+        printf("led strip initialized\n");
+        return true;
+    }
+    return false;
+}
+
+
+void Partyman::initialize_strips(led_strip_t * strips){
+    for(int i=0; i<amount_strips; i++){
+        mutexies[i] = xSemaphoreCreateBinary();
+        init_new_strip(strips+i,strip_pins[i],strip_lengths[i],i);
+        vTaskDelay(1);
+    }
+}
+void Partyman::led_strips_clear(led_strip_t * strips){
+    for(int i=0; i<amount_strips; i++){
+        led_strip_clear(strips+i);
+    }
+}
+
 
 
 // ich brauch mal hilfe mit c/c++:

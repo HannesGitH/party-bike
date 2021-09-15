@@ -25,7 +25,7 @@ void drive_effects(led_strip_t * strips,uint step_millis, Effect * effects, uint
     for(int step=0;step<max_reps;step++){
         for (uint16_t i = 0; i < amount; i++)
         {
-            // Serial.printf("step %d, strip %d \n",step, i);
+            Serial.printf("step %d, strip %d \n",step, i);
             if(run_all_in_every_step || effects[i].repetitions < step)
             effects[i].draw(strips,step, extra_args_p ? extra_args_p[i] : NULL);
         }
@@ -34,7 +34,7 @@ void drive_effects(led_strip_t * strips,uint step_millis, Effect * effects, uint
 }
 
 void effect_spread_pixel_draw(led_strip_t * strips, uint32_t step, void* extra_args_p){
-    irgb_t walking_color = {.r = 0xFF,.g = 0x44,.b = 0xCC,};
+    irgb_t walking_color = iRGB(0xFF,0x44,0xCC);
     for(uint i=0; i<amount_strips; i++){
         if(step<=strip_lengths[i]){
             led_strip_addto_pixel_color(strips+i,step,walking_color);
@@ -44,7 +44,7 @@ void effect_spread_pixel_draw(led_strip_t * strips, uint32_t step, void* extra_a
 }
 
 void draw_iterated_pixel(led_strip_t * strips, uint32_t step, void* extra_args_p){
-    irgb_t walking_color = extra_args_p ? *(irgb_t*) extra_args_p : (irgb_t){.r = 0xFF,.g = 0x44,.b = 0xCC,};
+    irgb_t walking_color = extra_args_p ? *(irgb_t*) extra_args_p : (irgb_t)iRGB(0xFF,0x44,0xCC);
 
     if(step<LENGTH_MAIN_L){
         //main_r
@@ -79,7 +79,7 @@ void draw_iterated_pixel(led_strip_t * strips, uint32_t step, void* extra_args_p
 
 
 void remove_iterated_pixel(led_strip_t * strips, uint32_t step, void* extra_args_p){
-    irgb_t walking_color = extra_args_p ? *(irgb_t*) extra_args_p : (irgb_t){.r = 0xFF,.g = 0x44,.b = 0xCC,};
+    irgb_t walking_color = extra_args_p ? *(irgb_t*) extra_args_p : (irgb_t)iRGB(0xFF,0x44,0xCC);
 
     if(0<step&&step<LENGTH_MAIN_L){
         //undo
@@ -111,7 +111,7 @@ void remove_iterated_pixel(led_strip_t * strips, uint32_t step, void* extra_args
 }
 
 void effect_walk_pixel_draw(led_strip_t * strips, uint32_t step, void* extra_args_p){
-    irgb_t walking_color = extra_args_p ? *(irgb_t*) extra_args_p : (irgb_t){.r = 0xFF,.g = 0x44,.b = 0xCC,};
+    irgb_t walking_color = extra_args_p ? *(irgb_t*) extra_args_p : (irgb_t)iRGB(0xFF,0x44,0xCC);
     draw_iterated_pixel(strips, step, extra_args_p);
     remove_iterated_pixel(strips, step, extra_args_p);
 }
@@ -127,7 +127,7 @@ Effect effect_spread_pixel{
 
 void effect_walking_colorline_draw(led_strip_t * strips, uint32_t step, void* extra_args_p){
     uint8_t length = extra_args_p ? *(uint8_t*) extra_args_p : 10;
-    irgb_t color = (irgb_t){.r = 0xFF,.g = 0x44,.b = 0xCC,};
+    irgb_t color = (irgb_t)iRGB(0xFF,0x44,0xCC);
     for (uint8_t i = 0; i < length; i++)
     {
         float sat = (float)(length-i)/(float)length;
@@ -155,18 +155,18 @@ void effect_streetlight_draw(led_strip_t * strips, uint32_t step, void* bool__tu
     //turn rear_b red
     for (uint8_t i = 0; i < strip_lengths[REAR]; i++)
     {
-        led_strip_set_pixel_color(strips+REAR,i,(irgb_t){.r = 0xFF,.g = 0x00,.b = 0x00,});
+        led_strip_set_pixel_color(strips+REAR,i,(irgb_t)iRGB(0xFF,0x00,0x00));
     }
     //turn rear_t red as well
     for (uint8_t i = 0; i < LENGTH_REAR_T; i++)
     {
-        led_strip_set_pixel_color(strips+MAIN,LENGTH_MAIN-LENGTH_REAR_T+i,(irgb_t){.r = 0xFF,.g = 0x00,.b = 0x00,});
+        led_strip_set_pixel_color(strips+MAIN,LENGTH_MAIN-LENGTH_REAR_T+i,(irgb_t)iRGB(0xFF,0x00,0x00));
     }
 
     //turn front white
     for (uint8_t i = 0; i < strip_lengths[FRNT]-3; i++)//there r 3 pixels not facing the front on the frnt strip
     {
-        led_strip_set_pixel_color(strips+FRNT,i,(irgb_t){.r = 0xFF,.g = 0xFF,.b = 0xFF,});
+        led_strip_set_pixel_color(strips+FRNT,i,(irgb_t)iRGB(0xFF,0xFF,0xFF));
     }
     /* 
     //saddle is also facing the front so turn it white as well
@@ -176,15 +176,15 @@ void effect_streetlight_draw(led_strip_t * strips, uint32_t step, void* bool__tu
     }
      */
     //turn other pixels facing the front white
-    led_strip_set_pixel_color(strips+MAIN,LENGTH_MAIN_R  ,(irgb_t){.r = 0xFF,.g = 0xFF,.b = 0xFF,});
-    led_strip_set_pixel_color(strips+MAIN,LENGTH_MAIN_R-1,(irgb_t){.r = 0xFF,.g = 0xFF,.b = 0xFF,});
-    led_strip_set_pixel_color(strips+DIAG,LENGTH_DIAG_R  ,(irgb_t){.r = 0xFF,.g = 0xFF,.b = 0xFF,});
-    led_strip_set_pixel_color(strips+DIAG,LENGTH_DIAG_R-1,(irgb_t){.r = 0xFF,.g = 0xFF,.b = 0xFF,});
+    led_strip_set_pixel_color(strips+MAIN,LENGTH_MAIN_R  ,(irgb_t)iRGB(0xFF,0xFF,0xFF));
+    led_strip_set_pixel_color(strips+MAIN,LENGTH_MAIN_R-1,(irgb_t)iRGB(0xFF,0xFF,0xFF));
+    led_strip_set_pixel_color(strips+DIAG,LENGTH_DIAG_R  ,(irgb_t)iRGB(0xFF,0xFF,0xFF));
+    led_strip_set_pixel_color(strips+DIAG,LENGTH_DIAG_R-1,(irgb_t)iRGB(0xFF,0xFF,0xFF));
     
     //turn other pixels facing the back red
-    led_strip_set_pixel_color(strips+FRNT,LENGTH_FRNT-1,(irgb_t){.r = 0xFF,.g = 0x00,.b = 0x00,});
-    led_strip_set_pixel_color(strips+FRNT,LENGTH_FRNT-2,(irgb_t){.r = 0xFF,.g = 0x00,.b = 0x00,});
-    led_strip_set_pixel_color(strips+FRNT,LENGTH_FRNT-3,(irgb_t){.r = 0xFF,.g = 0x00,.b = 0x00,});
+    led_strip_set_pixel_color(strips+FRNT,LENGTH_FRNT-1,(irgb_t)iRGB(0xFF,0x00,0x00));
+    led_strip_set_pixel_color(strips+FRNT,LENGTH_FRNT-2,(irgb_t)iRGB(0xFF,0x00,0x00));
+    led_strip_set_pixel_color(strips+FRNT,LENGTH_FRNT-3,(irgb_t)iRGB(0xFF,0x00,0x00));
 }
 
 Effect effect_streetlight{
@@ -198,7 +198,7 @@ void effect_init_rainbow_draw(led_strip_t * strips, uint32_t step, void* total_h
     int total_hue_rotations = 2;//total_hue_rotations_p ? *(int*) total_hue_rotations_p : 1;
     uint8_t pixels = LENGTH_MAIN_L+LENGTH_DIAG_L+LENGTH_SDDL;
     float hue_change = fmod(360*(((float)total_hue_rotations)/pixels),360);
-    irgb_t color = (irgb_t){.r = 0x00,.g = 0x00,.b = 0xFE,};
+    irgb_t color = (irgb_t)iRGB(0x00,0x00,0xFE);
     for (uint8_t i = 0; i < pixels; i++)
     {
         irgb_t current_color = change_hue(color,i*hue_change);
