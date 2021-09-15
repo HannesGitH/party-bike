@@ -21,8 +21,12 @@ Partyman::Partyman()
     initialize_strips(strips);
     Serial.println("partymaaaan");
     
-    drive_effect(strips,50,effect_init_rainbow);
-    drive_effect(strips,30,effect_change_hue);
+    // drive_effect(strips,50,effect_init_rainbow);
+    // drive_effect(strips,30,effect_change_hue);
+    
+    //void ** extra_effect_args = (void**) malloc(sizeof(void*)*10);
+    struct Effect inits[] = {effect_init_rainbow, effect_change_hue}; 
+    drive_effects(strips,40,inits,2);
     drive_effect(strips,50,effect_set_color,&black);
     //test();
     return;
@@ -35,19 +39,16 @@ Partyman::~Partyman()
 }
 
 void Partyman::runEffects(EffectWithArg effects[],uint8_t len){
-    int arrLength = len;//sizeof(effects)/sizeof(effects[0]);
-    // Serial.println(effects[0].eff->repetitions);
+    int arrLength = len;//sizeof(effects)/sizeof(effects[0]);//wouldnt work
     Effect effs[arrLength];
     void * args[arrLength];
     for(int i = 0; i<arrLength ;i++){
-        effs[i]=*(effects[i].eff);
-        // Serial.println(effects[i].eff->repetitions);
-        // Serial.println((*(effects[i].eff)).repetitions);
-        // Serial.println(effs[i].repetitions);
-        args[0]=effects[0].arg;
+        effs[i]=effects[i].eff;
+        ////Serial.printf("the wanted effect is at %d (%d)(%d) while the actual one is at %d(%d) \n",(effs+i)->draw,effs->draw,effs[i].draw,effect_init_rainbow.draw,(&effect_init_rainbow)->draw);
+        args[i]=effects[i].arg;
     }
-    // Serial.println(arrLength);
-    drive_effects(strips,20,&effs[0],arrLength,args,false); 
+    //drive_effects(strips,40,inits,2,extra_effect_args,false);
+    drive_effects(strips,20,effs,arrLength,args,false); 
     Serial.println("drove em");return;
 }
 

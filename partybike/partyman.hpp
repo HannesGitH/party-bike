@@ -7,7 +7,7 @@
 #include <Arduino.h>
 
 struct EffectWithArg {
-    Effect * eff;
+    Effect eff;
     void * arg;
 };
 
