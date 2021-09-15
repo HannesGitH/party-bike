@@ -7,25 +7,28 @@
 #include <Arduino.h>
 
 int bufferOffset(uint16_t stripnum){
-    uint16_t acc = 0;
+    uint16_t acc = 1;
     for (uint8_t i = 0; i < stripnum; i++)
     {
         acc+=strip_lengths[i];
     }
-    return acc;
+    return acc-1;
 }
 
 Partyman::Partyman()
-{
+{ 
+    fullbuf = (irgb_t *) malloc(LENGTH_TOTAL*sizeof(irgb_t));
     initialize_strips(strips);
     Serial.println("partymaaaan");
     
-    drive_effect(strips,50,effect_walk_pixel);
+    //drive_effect(strips,50,effect_walk_pixel);
+    test();
     return;
 }
 
 Partyman::~Partyman()
 {
+    free(fullbuf);
 }
 
 void Partyman::runEffects(EffectWithArg effects[],uint8_t len){
@@ -46,13 +49,29 @@ void Partyman::runEffects(EffectWithArg effects[],uint8_t len){
 }
 
 void Partyman::sendBuffer(irgb_t buffer[LENGTH_TOTAL]){
-    for(int step = 0; step < *(std::max_element(strip_lengths,strip_lengths+amount_strips)); step++){
+    uint16_t longest_length = *(std::max_element(strip_lengths,strip_lengths+amount_strips));
+    for(int step = 0; step < longest_length; step++){
         for(uint i=0; i<amount_strips; i++){
             if(step<=strip_lengths[i]){
                 led_strip_set_pixel_color(strips+i,step,buffer[step+bufferOffset(i)]);
             }
         }
     }
+}
+
+void Partyman::test(){
+    for (uint16_t i = 0; i < LENGTH_TOTAL; i++)
+    {
+        fullbuf[i]={.r=0xFF, .g=0xFF, .b=0xFF, .i=0x00};
+    }
+    sendBuffer(fullbuf);
+    for (uint16_t i = 0; i < LENGTH_TOTAL; i++)
+    {
+        fullbuf[i]={.r=0x00, .g=0x00, .b=0x00, .i=0x00};
+    }
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    sendBuffer(fullbuf);
+    //drive_effect(strips,50,effect_init_rainbow,NULL);
 }
 
 

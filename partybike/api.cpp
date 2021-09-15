@@ -40,9 +40,11 @@ void Api::run(){
     }
     if (locked)return;
 
-    if (command == "lock")locked = true;
-    else if (command == "custom")custom();
-    else if (command.substring(0,7)=="effects")effectsrun(command.substring(8));
+    if      (command                == "lock"       ) locked = true;
+    else if (command                == "custom"     ) custom();
+    else if (command.substring(0,7) == "effects"    ) effectsrun(command.substring(8));
+    else if (command                == "test"       ) pm.test();
+
     else SerialBT.printf("\"%s\" not supported\n",command);
   }
   return; 

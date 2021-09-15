@@ -8,7 +8,7 @@
 #define LED_STRIP_TASK_SIZE             (4096)
 #define LED_STRIP_TASK_PRIORITY         (configMAX_PRIORITIES - 1)
 
-#define LED_STRIP_REFRESH_PERIOD_MS     (30U) // TODO: add as parameter to led_strip_init
+#define LED_STRIP_REFRESH_PERIOD_MS     (60U) // TODO: add as parameter to led_strip_init
 
 #define LED_STRIP_NUM_RMT_ITEMS_PER_LED (24U) // Assumes 24 bit color for each led
 
@@ -16,12 +16,20 @@
 #define LED_STRIP_RMT_CLK_DIV (4) // TODO XXX hier iwas? 4 machte schonmal mehr als 8 was eigtl unlogisch ist, wird das RMT peripheral vllt schon anderwaltig (zb durch BTSerial) verwendet?
 
 /****************************
+        WS2812b Timing
+ ****************************/
+#define LED_STRIP_RMT_TICKS_BIT_1_HIGH_WS2812 16    // 800ns (900ns +/- 150ns per datasheet)
+#define LED_STRIP_RMT_TICKS_BIT_1_LOW_WS2812  9     // 450ns (350ns +/- 150ns per datasheet)
+#define LED_STRIP_RMT_TICKS_BIT_0_HIGH_WS2812 8     // 400ns (350ns +/- 150ns per datasheet)
+#define LED_STRIP_RMT_TICKS_BIT_0_LOW_WS2812  17    // 850ns (900ns +/- 150ns per datasheet)
+
+/****************************
         WS2812 Timing
  ****************************/
-#define LED_STRIP_RMT_TICKS_BIT_1_HIGH_WS2812 9 // 900ns (900ns +/- 150ns per datasheet)
-#define LED_STRIP_RMT_TICKS_BIT_1_LOW_WS2812  3 // 300ns (350ns +/- 150ns per datasheet)
-#define LED_STRIP_RMT_TICKS_BIT_0_HIGH_WS2812 3 // 300ns (350ns +/- 150ns per datasheet)
-#define LED_STRIP_RMT_TICKS_BIT_0_LOW_WS2812  9 // 900ns (900ns +/- 150ns per datasheet)
+// #define LED_STRIP_RMT_TICKS_BIT_1_HIGH_WS2812 14    // 700ns (900ns +/- 150ns per datasheet)
+// #define LED_STRIP_RMT_TICKS_BIT_1_LOW_WS2812  12    // 600ns (350ns +/- 150ns per datasheet)
+// #define LED_STRIP_RMT_TICKS_BIT_0_HIGH_WS2812 7     // 350ns (350ns +/- 150ns per datasheet)
+// #define LED_STRIP_RMT_TICKS_BIT_0_LOW_WS2812  16    // 800ns (900ns +/- 150ns per datasheet)
 
 // Function pointer for generating waveforms based on different LED drivers
 typedef void (*led_fill_rmt_items_fn)(irgb_t *led_strip_buf, rmt_item32_t *rmt_items, uint32_t led_strip_length);
