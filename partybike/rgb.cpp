@@ -32,10 +32,10 @@ irgb_t fromarray(uint8_t v4[4]) {
 
 irgb_t invert(irgb_t iRGB){
     return {
-        .r = iRGB.r ^ 0xFF,
-        .g = iRGB.g ^ 0xFF,
-        .b = iRGB.b ^ 0xFF,
-        .i = iRGB.i ^ 0xFF
+        .r = (iRGB.r ^ 0xFF) +1,
+        .g = (iRGB.g ^ 0xFF) +1,
+        .b = (iRGB.b ^ 0xFF) +1,
+        .i = (iRGB.i ^ 0xFF) +1
     };
 }
 
