@@ -24,6 +24,9 @@ struct irgb_t
     irgb_t& operator +=(const irgb_t& a){return *this+a;}
 };
 
+extern irgb_t black;
+extern irgb_t white;
+
 irgb_t fromarray(uint8_t v4[4]);
 
 irgb_t iRGB

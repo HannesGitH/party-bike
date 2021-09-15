@@ -21,13 +21,16 @@ Partyman::Partyman()
     initialize_strips(strips);
     Serial.println("partymaaaan");
     
-    //drive_effect(strips,50,effect_walk_pixel);
-    test();
+    drive_effect(strips,50,effect_init_rainbow);
+    drive_effect(strips,30,effect_change_hue);
+    drive_effect(strips,50,effect_set_color,&black);
+    //test();
     return;
 }
 
 Partyman::~Partyman()
 {
+    reset();
     free(fullbuf);
 }
 
@@ -60,7 +63,6 @@ void Partyman::sendBuffer(irgb_t buffer[LENGTH_TOTAL]){
 }
 
 void Partyman::test(){
-    /*
     for (uint16_t i = 0; i < LENGTH_TOTAL; i++)
     {
         fullbuf[i]=change_hue(iRGB(0xF0,0x0F,0x00),(float)i*7.8);
@@ -71,8 +73,12 @@ void Partyman::test(){
         fullbuf[i]={.r=0x00, .g=0x00, .b=0x00, .i=0x00};
     }
     vTaskDelay(2000 / portTICK_PERIOD_MS);
-    sendBuffer(fullbuf);*/
-    drive_effect(strips,50,effect_init_rainbow);
+    sendBuffer(fullbuf);
+    //drive_effect(strips,50,effect_init_rainbow);
+}
+
+void Partyman::reset(){
+    drive_effect(strips,50,effect_set_color,&black);
 }
 
 

@@ -24,6 +24,7 @@ private:
     void led_strips_clear(led_strip_t * strips);
 public:
     void test();
+    void reset();
     void runEffects(EffectWithArg effects[],uint8_t len);
     void sendBuffer(irgb_t buffer[LENGTH_TOTAL]);
     Partyman();

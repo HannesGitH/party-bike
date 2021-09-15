@@ -18,6 +18,9 @@ irgb_t iRGB
     };
 }
 
+irgb_t black = {.r=0x00, .g=0x00, .b=0x00, .i=0x00};
+irgb_t white = {.r=0xFF, .g=0xFF, .b=0xFF, .i=0x00};
+
 irgb_t fromarray(uint8_t v4[4]) {
     return {
         .r = v4[0],

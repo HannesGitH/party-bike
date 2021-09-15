@@ -8,19 +8,6 @@ Api::Api(String name)
 {
     SerialBT.begin(name);
 
-    // std::pair<char, EffectWithArg> tmp[] =
-    // {
-    //     { 'w', {.eff = &effect_walk_pixel        , .arg = NULL } },
-    //     { 's', {.eff = &effect_spread_pixel      , .arg = NULL } },
-    //     { 'W', {.eff = &effect_walking_colorline , .arg = NULL } },
-    //     { 'S', {.eff = &effect_streetlight       , .arg = NULL } },
-    //     { 'r', {.eff = &effect_init_rainbow      , .arg = NULL } },
-    //     { 'h', {.eff = &effect_change_hue        , .arg = NULL } }
-    // };
-    // for(std::pair<char, EffectWithArg> p : tmp )
-    // {
-    //   possible_effects[p.first]=p.second;
-    // }
 }
 
 Api::~Api()
@@ -44,6 +31,7 @@ void Api::run(){
     else if (command                == "custom"     ) custom();
     else if (command.substring(0,7) == "effects"    ) effectsrun(command.substring(8));
     else if (command                == "test"       ) pm.test();
+    else if (command                == "reset"      ) pm.reset();
 
     else SerialBT.printf("\"%s\" not supported\n",command);
   }

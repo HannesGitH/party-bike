@@ -23,6 +23,6 @@ void setup() {
 }
 
 void loop() {
-    Serial.println("im still alive!");
+    //Serial.println("im still alive!");
     vTaskDelay(25000/portTICK_PERIOD_MS);
 }
