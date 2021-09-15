@@ -34,15 +34,16 @@ void drive_effects(led_strip_t * strips,uint step_millis, Effect * effects, uint
     }
 }
 
-void effect_spread_pixel_draw(led_strip_t * strips, uint32_t step, void* extra_args_p){
-    irgb_t walking_color = iRGB(0xFF,0x44,0xCC);
-    for(uint i=0; i<amount_strips; i++){
-        if(step<=strip_lengths[i]){
-            led_strip_addto_pixel_color(strips+i,step,walking_color);
-            led_strip_addto_pixel_color(strips+i,step-1,invert(walking_color));
-        }
-    }
-}
+// //TODO why would i want this?
+// void effect_spread_pixel_draw(led_strip_t * strips, uint32_t step, void* extra_args_p){
+//     irgb_t walking_color = iRGB(0xFF,0x44,0xCC);
+//     for(uint i=0; i<amount_strips; i++){
+//         if(step<=strip_lengths[i]){
+//             led_strip_addto_pixel_color(strips+i,step,walking_color);
+//             led_strip_addto_pixel_color(strips+i,step-1,invert(walking_color));
+//         }
+//     }
+// }
 
 void draw_iterated_pixel(led_strip_t * strips, uint32_t step, void* extra_args_p){
     irgb_t walking_color = extra_args_p ? *(irgb_t*) extra_args_p : (irgb_t)iRGB(0xFF,0x44,0xCC);
@@ -161,10 +162,10 @@ Effect effect_walk_pixel{
     .repetitions = LENGTH_MAIN_L+LENGTH_SDDL+LENGTH_DIAG_L+1,
     .draw = effect_walk_pixel_draw
 };
-Effect effect_spread_pixel{
-    .repetitions = LENGTH_MAIN,
-    .draw = effect_spread_pixel_draw  
-};
+// Effect effect_spread_pixel{
+//     .repetitions = LENGTH_MAIN,
+//     .draw = effect_spread_pixel_draw  
+// };
 
 void effect_walking_colorline_draw(led_strip_t * strips, uint32_t step, void* extra_args_p){
     uint8_t length = extra_args_p ? *(uint8_t*) extra_args_p : 10;
