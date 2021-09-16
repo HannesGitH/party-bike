@@ -84,10 +84,13 @@ static void led_strip_task(void *arg)
 
     led_make_waveform = led_strip_fill_rmt_items_ws2812;
 
-    for(;;) {
-        configASSERT(led_strip->access_semaphore);
+    for(;;) {  
+        vTaskDelay(LED_STRIP_REFRESH_PERIOD_MS / portTICK_PERIOD_MS);  
+        xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
+        //if(!(led_strip->is_dirty))continue;
+
         rmt_wait_tx_done(led_strip->rmt_channel, portMAX_DELAY);
-        xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY); //this threw (xQueueGenericReceive)- assert failed!
+        //led_strip->is_dirty = false;
 
         make_new_rmt_items = true;
 
@@ -97,7 +100,6 @@ static void led_strip_task(void *arg)
 
         rmt_write_items(led_strip->rmt_channel, rmt_items, num_items_malloc, false);
         xSemaphoreGive(led_strip->access_semaphore);
-        vTaskDelay(LED_STRIP_REFRESH_PERIOD_MS / portTICK_PERIOD_MS);
     }
 
     if (rmt_items) {
@@ -151,6 +153,8 @@ bool led_strip_init(struct led_strip_t *led_strip)
         return false;
     }
 
+    //led_strip->is_dirty=false;
+
     memset(led_strip->led_strip_buf, 0, sizeof(irgb_t) * led_strip->led_strip_length);
 
     bool init_rmt = led_strip_init_rmt(led_strip);
@@ -184,6 +188,7 @@ bool led_strip_set_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num
 
     xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
     led_strip->led_strip_buf[pixel_num] = color;
+    //led_strip->is_dirty=true;
     //Serial.printf("turning pixel %d into {r: %d g:%d b: %d}\n", pixel_num, color.r, color.g, color.b);
     xSemaphoreGive(led_strip->access_semaphore);
 
@@ -199,12 +204,17 @@ bool led_strip_get_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num
 {
     bool get_success = true;
 
+
+    xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
+
     if ((!led_strip) ||
         (pixel_num > led_strip->led_strip_length)
     ){ 
         return false;
     }
     *color = led_strip->led_strip_buf[pixel_num];
+
+    xSemaphoreGive(led_strip->access_semaphore);
 
     return get_success;
 }
@@ -233,6 +243,7 @@ bool led_strip_clear(struct led_strip_t *led_strip)
 
     xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
     memset(led_strip->led_strip_buf, 0, sizeof(irgb_t) * led_strip->led_strip_length);
+    // led_strip->is_dirty = true;
     xSemaphoreGive(led_strip->access_semaphore);
     
     return success;

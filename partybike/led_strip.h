@@ -31,6 +31,7 @@ struct led_strip_t {
     int rmt_interrupt_num;
 
     irgb_t * led_strip_buf;
+    //bool is_dirty;
 
     xSemaphoreHandle access_semaphore;
 };
