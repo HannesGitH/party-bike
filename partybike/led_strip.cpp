@@ -87,10 +87,10 @@ static void led_strip_task(void *arg)
     for(;;) {  
         vTaskDelay(LED_STRIP_REFRESH_PERIOD_MS / portTICK_PERIOD_MS);  
         xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
-        //if(!(led_strip->is_dirty))continue;
+        if(!(led_strip->is_dirty)){xSemaphoreGive(led_strip->access_semaphore);continue;}
 
         rmt_wait_tx_done(led_strip->rmt_channel, portMAX_DELAY);
-        //led_strip->is_dirty = false;
+        led_strip->is_dirty = false;
 
         make_new_rmt_items = true;
 
@@ -153,7 +153,7 @@ bool led_strip_init(struct led_strip_t *led_strip)
         return false;
     }
 
-    //led_strip->is_dirty=false;
+    led_strip->is_dirty=false;
 
     memset(led_strip->led_strip_buf, 0, sizeof(irgb_t) * led_strip->led_strip_length);
 
@@ -188,7 +188,7 @@ bool led_strip_set_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num
 
     xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
     led_strip->led_strip_buf[pixel_num] = color;
-    //led_strip->is_dirty=true;
+    led_strip->is_dirty=true;
     //Serial.printf("turning pixel %d into {r: %d g:%d b: %d}\n", pixel_num, color.r, color.g, color.b);
     xSemaphoreGive(led_strip->access_semaphore);
 
@@ -204,16 +204,14 @@ bool led_strip_get_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num
 {
     bool get_success = true;
 
-
-    xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
-
     if ((!led_strip) ||
         (pixel_num > led_strip->led_strip_length)
     ){ 
         return false;
     }
-    *color = led_strip->led_strip_buf[pixel_num];
 
+    xSemaphoreTake(led_strip->access_semaphore, portMAX_DELAY);
+    *color = led_strip->led_strip_buf[pixel_num];
     xSemaphoreGive(led_strip->access_semaphore);
 
     return get_success;

@@ -15,7 +15,7 @@ private:
     void custom();
     
     // std::map<char, EffectWithArg> possible_effects;
-    void effectsrun(String effectstr);
+    void effectsrun(String effectstr, bool loop);
     void sendBuffer(irgb_t buffer[LENGTH_TOTAL]);
 public:
     Api(String name);

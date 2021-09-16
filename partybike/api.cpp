@@ -27,9 +27,12 @@ void Api::run(){
     }
     if (locked)return;
 
+    pm.stopLoop();
+
     if      (command                == "lock"       ) locked = true;
     else if (command                == "custom"     ) custom();
-    else if (command.substring(0,7) == "effects"    ) effectsrun(command.substring(8));
+    else if (command.substring(0,7) == "effects"    ) effectsrun(command.substring(8),false);
+    else if (command.substring(0,4) == "loop"       ) effectsrun(command.substring(5),true);
     else if (command                == "test"       ) pm.test();
     else if (command                == "reset"      ) pm.reset();
 
@@ -64,7 +67,7 @@ void Api::sendBuffer(irgb_t * buffer){
 #include <map>
 #include "effects.hpp"
 
-void Api::effectsrun(String effectstr){
+void Api::effectsrun(String effectstr, bool loop){
   EffectWithArg effects_to_run[effectstr.length()];
   uint8_t i=0;
   uint8_t failed=0;
@@ -81,6 +84,10 @@ void Api::effectsrun(String effectstr){
     else{failed++;}
     i++;
   }
-  pm.runEffects(effects_to_run,i-failed);
+  if(loop)
+    pm.loopEffects(effects_to_run,i-failed);
+  else
+    pm.runEffects(effects_to_run,i-failed);
+
   return; //TODO
 }

@@ -38,7 +38,36 @@ Partyman::~Partyman()
     free(fullbuf);
 }
 
+struct EffectArgMan{
+    EffectWithArg * effects;
+    uint8_t len;
+    Partyman * pm;
+};
+
+void looper(void * arg){
+    EffectArgMan efar = *((EffectArgMan*)arg);
+    int arrLength = efar.len;//sizeof(effects)/sizeof(effects[0]);//wouldnt work
+    Serial.printf("effects are at %d, pm at %d\n",efar.effects,efar.pm);
+    for(;;){
+        efar.pm->runEffects(efar.effects,efar.len);
+        vTaskDelay(50/portTICK_PERIOD_MS);
+    }
+}
+
+void Partyman::loopEffects(EffectWithArg effects[],uint8_t len){
+    Serial.printf("effects are at %d, pm at %d\n",effects,this);
+    EffectArgMan efar = {.effects = effects,.len = len,.pm = this};
+    //TODO
+    xTaskCreate(looper,"effectLoop",2048,&efar,1,&loopHandle);//idk if this works or somehow weirds out because class members..
+}
+
+void Partyman::stopLoop(){
+    if(loopHandle)vTaskDelete(loopHandle);
+}
+
 void Partyman::runEffects(EffectWithArg effects[],uint8_t len){
+    
+    Serial.printf("effects are at %d, pm at %d\t..\n",effects,this);
     int arrLength = len;//sizeof(effects)/sizeof(effects[0]);//wouldnt work
     Effect effs[arrLength];
     void * args[arrLength];
@@ -47,7 +76,7 @@ void Partyman::runEffects(EffectWithArg effects[],uint8_t len){
         ////Serial.printf("the wanted effect is at %d (%d)(%d) while the actual one is at %d(%d) \n",(effs+i)->draw,effs->draw,effs[i].draw,effect_init_rainbow.draw,(&effect_init_rainbow)->draw);
         args[i]=effects[i].arg;
     }
-    //drive_effects(strips,40,inits,2,extra_effect_args,false);
+    ////drive_effects(strips,40,inits,2,extra_effect_args,false);
     drive_effects(strips,20,effs,arrLength,args,false); 
     Serial.println("drove em");return;
 }
@@ -79,6 +108,7 @@ void Partyman::test(){
 }
 
 void Partyman::reset(){
+    stopLoop();
     drive_effect(strips,50,effect_set_color,&black);
 }
 
