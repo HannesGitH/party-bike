@@ -14,6 +14,24 @@ int bufferOffset(uint16_t stripnum){
     return acc-1;
 }
 
+struct EffectArgMan{
+    EffectWithArg * effects;
+    uint8_t len;
+    Partyman * pm;
+};
+
+void looper(void * arg){
+    EffectArgMan efar = *((EffectArgMan*)arg);
+    int arrLength = efar.len;
+    Serial.printf("effects are at %d, pm at %d, efar at %d\n",efar.effects,efar.pm,&efar);
+    for(;;){
+        efar.pm->runEffects(efar.effects,efar.len);
+        vTaskDelay(50/portTICK_PERIOD_MS);
+    }
+}
+
+EffectArgMan efar;
+
 Partyman::Partyman()
 { 
     fullbuf = (irgb_t *) malloc(LENGTH_TOTAL*sizeof(irgb_t));
@@ -38,26 +56,10 @@ Partyman::~Partyman()
     free(fullbuf);
 }
 
-struct EffectArgMan{
-    EffectWithArg * effects;
-    uint8_t len;
-    Partyman * pm;
-};
-
-void looper(void * arg){
-    EffectArgMan efar = *((EffectArgMan*)arg);
-    int arrLength = efar.len;//sizeof(effects)/sizeof(effects[0]);//wouldnt work
-    Serial.printf("effects are at %d, pm at %d\n",efar.effects,efar.pm);
-    for(;;){
-        efar.pm->runEffects(efar.effects,efar.len);
-        vTaskDelay(50/portTICK_PERIOD_MS);
-    }
-}
-
 void Partyman::loopEffects(EffectWithArg effects[],uint8_t len){
-    Serial.printf("effects are at %d, pm at %d\n",effects,this);
-    EffectArgMan efar = {.effects = effects,.len = len,.pm = this};
-    //TODO
+    Serial.printf("effects are at %d, pm at %d, efar at %d\n",effects,this,&efar);
+    //TODO why wouldnt this work? 
+    efar = {.effects = effects,.len = len,.pm = this};
     xTaskCreate(looper,"effectLoop",2048,&efar,1,&loopHandle);//idk if this works or somehow weirds out because class members..
 }
 
@@ -67,7 +69,7 @@ void Partyman::stopLoop(){
 
 void Partyman::runEffects(EffectWithArg effects[],uint8_t len){
     
-    Serial.printf("effects are at %d, pm at %d\t..\n",effects,this);
+    Serial.printf("effects are at %d, pm at %d, efar at %d\n",effects,this,&efar);
     int arrLength = len;//sizeof(effects)/sizeof(effects[0]);//wouldnt work
     Effect effs[arrLength];
     void * args[arrLength];
