@@ -28,9 +28,9 @@ QueueHandle_t effectQueue = xQueueCreate(5,sizeof(EffectWithArg));
 void effectLoop(void * arg){
 
     bool ranOnce = false;
-    EffectArgMan * efar;
+    EffectArgMan efar;
     
-    Effect * effs;
+    Effect * effs; // TODO alloc
     void ** args;
 
     for(;;){
