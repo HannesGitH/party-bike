@@ -26,10 +26,12 @@ private:
     void initialize_strips(led_strip_t * strips);
     void led_strips_clear(led_strip_t * strips);
 public:
+    uint speed;
     void test();
     void reset();
     void runEffects(EffectWithArg effects[],uint8_t len);
     void loopEffects(EffectWithArg effects[],uint8_t len);
+    void driveEffects(Effect * effects, uint8_t amount, void * extra_args_p[], bool run_all_in_every_step);
     void stopLoop();
     void sendBuffer(irgb_t buffer[LENGTH_TOTAL]);
     Partyman();

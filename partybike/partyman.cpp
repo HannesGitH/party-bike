@@ -18,33 +18,62 @@ struct EffectArgMan{
     EffectWithArg * effects;
     uint8_t len;
     Partyman * pm;
+    bool loop;
 };
 
-void looper(void * arg){
-    EffectArgMan * efar = (EffectArgMan*)arg;
-    int arrLength = efar->len;
-    ////Serial.printf("effects are at %d, pm at %d, efar at %d\n",efar->effects,efar->pm,efar);
+////EffectArgMan efar;
+QueueHandle_t effectQueue;//= xQueueCreate(5,sizeof(EffectWithArg));
+
+
+void effectLoop(void * arg){
+
+    bool ranOnce = false;
+    EffectArgMan * efar;
+    
+    Effect * effs;
+    void ** args;
+
     for(;;){
-        efar->pm->runEffects(efar->effects,efar->len);
         vTaskDelay(50/portTICK_PERIOD_MS);
+        if(uxQueueMessagesWaiting(effectQueue)){
+            Serial.println("received a new effect");
+            xQueueReceive(effectQueue,efar,10);
+            ranOnce = false;
+        }
+        if(efar == NULL)continue;           //nothing received yet
+        if (efar->len == 0)continue;        //no effects
+        if(ranOnce && !efar->loop)continue; //not looping and we already ran the effects
+
+        for(int i = 0; i<efar->len ;i++){
+            effs[i]=efar->effects[i].eff;
+            args[i]=efar->effects[i].arg;
+        }       
+
+        efar->pm->driveEffects(effs,efar->len,args,false); 
+        ranOnce = true;
     }
 }
 
-EffectArgMan efar;
 
 Partyman::Partyman()
 { 
     fullbuf = (irgb_t *) malloc(LENGTH_TOTAL*sizeof(irgb_t));
     mutexies = (xSemaphoreHandle *) malloc(LENGTH_TOTAL*sizeof(xSemaphoreHandle));
     initialize_strips(strips);
+
+    speed=20;
+    
+    effectQueue = xQueueCreate(5,sizeof(EffectWithArg));
+    xTaskCreate(effectLoop,"effectLoop",2048,NULL,1,&loopHandle);//idk if this works or somehow weirds out because class members..
+
     Serial.println("partymaaaan");
     
     // drive_effect(strips,50,effect_init_rainbow);
     // drive_effect(strips,30,effect_change_hue);
     
     //void ** extra_effect_args = (void**) malloc(sizeof(void*)*10);
-    struct Effect inits[] = {effect_init_rainbow, effect_change_hue}; 
-    drive_effects(strips,40,inits,2);
+    struct Effect inits[] = {effect_init_rainbow, effect_walk_pixel}; 
+    driveEffects(inits,2,NULL,false);
     drive_effect(strips,50,effect_set_color,&black);
     //test();
     return;
@@ -57,30 +86,17 @@ Partyman::~Partyman()
 }
 
 void Partyman::loopEffects(EffectWithArg effects[],uint8_t len){
-   //// Serial.printf("effects are at %d, pm at %d, efar at %d\n",effects,this,&efar);
-    ////done why wouldnt this work? 
-    efar = {.effects = effects,.len = len,.pm = this};
-    xTaskCreate(looper,"effectLoop",2048,&efar,1,&loopHandle);//idk if this works or somehow weirds out because class members..
+    EffectArgMan efar = {.effects = effects,.len = len,.pm = this,.loop=true};
+    xQueueSend(effectQueue,(void *)&efar,10);
 }
 
 void Partyman::stopLoop(){
-    if(loopHandle)vTaskDelete(loopHandle);
+    runEffects(NULL,0);
 }
 
 void Partyman::runEffects(EffectWithArg effects[],uint8_t len){
-    
-    ////Serial.printf("effects are at %d, pm at %d, efar at %d\n",effects,this,&efar);
-    int arrLength = len;//sizeof(effects)/sizeof(effects[0]);//wouldnt work
-    Effect effs[arrLength];
-    void * args[arrLength];
-    for(int i = 0; i<arrLength ;i++){
-        effs[i]=effects[i].eff;
-        ////Serial.printf("the wanted effect is at %d (%d)(%d) while the actual one is at %d(%d) \n",(effs+i)->draw,effs->draw,effs[i].draw,effect_init_rainbow.draw,(&effect_init_rainbow)->draw);
-        args[i]=effects[i].arg;
-    }
-    ////drive_effects(strips,40,inits,2,extra_effect_args,false);
-    drive_effects(strips,20,effs,arrLength,args,false); 
-    Serial.println("drove em");return;
+    EffectArgMan efar = {.effects = effects,.len = len,.pm = this,.loop=true};
+    xQueueSend(effectQueue,(void *)&efar,10);
 }
 
 void Partyman::sendBuffer(irgb_t buffer[LENGTH_TOTAL]){
@@ -107,6 +123,11 @@ void Partyman::test(){
     vTaskDelay(2000 / portTICK_PERIOD_MS);
     sendBuffer(fullbuf);
     //drive_effect(strips,50,effect_init_rainbow);
+}
+
+void Partyman::driveEffects(Effect * effects, uint8_t amount, void * extra_args_p[], bool run_all_in_every_step){
+    drive_effects(strips,speed,effects,amount,extra_args_p,run_all_in_every_step);
+    Serial.println("drove em");return;
 }
 
 void Partyman::reset(){
