@@ -68,7 +68,8 @@ void Api::sendBuffer(irgb_t * buffer){
 #include "effects.hpp"
 
 void Api::effectsrun(String effectstr, bool loop){
-  EffectWithArg effects_to_run[effectstr.length()];
+  free(effects_to_run);//maybe a realloc would be better?
+  effects_to_run = (EffectWithArg*) malloc(effectstr.length()* sizeof(EffectWithArg)); //Attention, that needs to be freed
   uint8_t i=0;
   uint8_t failed=0;
   for (char c : effectstr)
@@ -85,9 +86,8 @@ void Api::effectsrun(String effectstr, bool loop){
     i++;
   }
   if(loop)
-    pm.loopEffects(effects_to_run,i-failed);
+    pm.loopEffects(effects_to_run,i-failed);//freeing the array has to occur when task is killed;
   else
     pm.runEffects(effects_to_run,i-failed);
-
-  return; //TODO
+  return;
 }

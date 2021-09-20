@@ -10,6 +10,7 @@ class Api
 {
 private:
     Partyman pm = Partyman();
+    EffectWithArg * effects_to_run; // so we can alloc and free memory for it (needs to be persistent for other tasks to access it (e.g. in loopeffects))
     bool locked = true;
     BluetoothSerial SerialBT;
     void custom();

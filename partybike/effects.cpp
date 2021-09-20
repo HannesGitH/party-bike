@@ -15,18 +15,18 @@ void drive_effect(led_strip_t * strips,uint step_millis, Effect effect, void * e
 
 void drive_effects(led_strip_t * strips,uint step_millis, Effect * effects, uint8_t amount, void * extra_args_p[], bool run_all_in_every_step){
     uint32_t max_reps = 0;
-    //Serial.printf("running %d effects \n",amount);
+    ////Serial.printf("running %d effects \n",amount);
     for (uint16_t i = 0; i < amount; i++)
     {
         max_reps = max(max_reps,effects[i].repetitions);
-        // Serial.println(effects[i].repetitions);
-        Serial.println(max_reps);
+        //// Serial.println(effects[i].repetitions);
+       //// Serial.println(max_reps);
     }
     
     for(int step=0;step<max_reps;step++){
         for (uint16_t i = 0; i < amount; i++)
         {
-            //Serial.printf("step %d, effect %d \n",step, i);
+            ////Serial.printf("step %d, effect %d \n",step, i);
             if(run_all_in_every_step || effects[i].repetitions > step)
             effects[i].draw(strips,step, extra_args_p ? extra_args_p[i] : NULL);
         }

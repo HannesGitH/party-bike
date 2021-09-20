@@ -21,11 +21,11 @@ struct EffectArgMan{
 };
 
 void looper(void * arg){
-    EffectArgMan efar = *((EffectArgMan*)arg);
-    int arrLength = efar.len;
-    Serial.printf("effects are at %d, pm at %d, efar at %d\n",efar.effects,efar.pm,&efar);
+    EffectArgMan * efar = (EffectArgMan*)arg;
+    int arrLength = efar->len;
+    ////Serial.printf("effects are at %d, pm at %d, efar at %d\n",efar->effects,efar->pm,efar);
     for(;;){
-        efar.pm->runEffects(efar.effects,efar.len);
+        efar->pm->runEffects(efar->effects,efar->len);
         vTaskDelay(50/portTICK_PERIOD_MS);
     }
 }
@@ -57,8 +57,8 @@ Partyman::~Partyman()
 }
 
 void Partyman::loopEffects(EffectWithArg effects[],uint8_t len){
-    Serial.printf("effects are at %d, pm at %d, efar at %d\n",effects,this,&efar);
-    //TODO why wouldnt this work? 
+   //// Serial.printf("effects are at %d, pm at %d, efar at %d\n",effects,this,&efar);
+    ////done why wouldnt this work? 
     efar = {.effects = effects,.len = len,.pm = this};
     xTaskCreate(looper,"effectLoop",2048,&efar,1,&loopHandle);//idk if this works or somehow weirds out because class members..
 }
@@ -69,7 +69,7 @@ void Partyman::stopLoop(){
 
 void Partyman::runEffects(EffectWithArg effects[],uint8_t len){
     
-    Serial.printf("effects are at %d, pm at %d, efar at %d\n",effects,this,&efar);
+    ////Serial.printf("effects are at %d, pm at %d, efar at %d\n",effects,this,&efar);
     int arrLength = len;//sizeof(effects)/sizeof(effects[0]);//wouldnt work
     Effect effs[arrLength];
     void * args[arrLength];
