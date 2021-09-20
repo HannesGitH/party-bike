@@ -29,27 +29,27 @@ void effectLoop(void * arg){
 
     bool ranOnce = false;
     EffectArgMan efar;
-    
-    Effect * effs; // TODO alloc
-    void ** args;
 
     for(;;){
         vTaskDelay(50/portTICK_PERIOD_MS);
         if(uxQueueMessagesWaiting(effectQueue)){
             Serial.println("received a new effect");
-            xQueueReceive(effectQueue,efar,10); //TODO: queue.c:1443 (xQueueGenericReceive)- assert failed!
+            xQueueReceive(effectQueue,&efar,10); //TODO: queue.c:1443 (xQueueGenericReceive)- assert failed!
             ranOnce = false;
         }
-        if(efar == NULL)continue;           //nothing received yet
-        if (efar->len == 0)continue;        //no effects
-        if(ranOnce && !efar->loop)continue; //not looping and we already ran the effects
+        if(efar.len == NULL)continue;      //nothing received yet
+        if (efar.len == 0)continue;        //no effects
+        if(ranOnce && !efar.loop)continue; //not looping and we already ran the effects
 
-        for(int i = 0; i<efar->len ;i++){
-            effs[i]=efar->effects[i].eff;
-            args[i]=efar->effects[i].arg;
+        Effect effs[efar.len];
+        void *args[efar.len];
+
+        for(int i = 0; i<efar.len ;i++){
+            effs[i]=efar.effects[i].eff;
+            args[i]=efar.effects[i].arg;
         }       
 
-        efar->pm->driveEffects(effs,efar->len,args,false); 
+        efar.pm->driveEffects(effs,efar.len,args,false); 
         ranOnce = true;
     }
 }
