@@ -21,8 +21,8 @@ struct EffectArgMan{
     bool loop;
 };
 
-////EffectArgMan efar;
-QueueHandle_t effectQueue;//= xQueueCreate(5,sizeof(EffectWithArg));
+EffectArgMan efar;
+QueueHandle_t effectQueue = xQueueCreate(5,sizeof(EffectWithArg));
 
 
 void effectLoop(void * arg){
@@ -37,7 +37,7 @@ void effectLoop(void * arg){
         vTaskDelay(50/portTICK_PERIOD_MS);
         if(uxQueueMessagesWaiting(effectQueue)){
             Serial.println("received a new effect");
-            xQueueReceive(effectQueue,efar,10);
+            xQueueReceive(effectQueue,efar,10); //TODO: queue.c:1443 (xQueueGenericReceive)- assert failed!
             ranOnce = false;
         }
         if(efar == NULL)continue;           //nothing received yet
@@ -63,7 +63,7 @@ Partyman::Partyman()
 
     speed=20;
     
-    effectQueue = xQueueCreate(5,sizeof(EffectWithArg));
+    //effectQueue = xQueueCreate(5,sizeof(EffectWithArg));
     xTaskCreate(effectLoop,"effectLoop",2048,NULL,1,&loopHandle);//idk if this works or somehow weirds out because class members..
 
     Serial.println("partymaaaan");
@@ -86,8 +86,9 @@ Partyman::~Partyman()
 }
 
 void Partyman::loopEffects(EffectWithArg effects[],uint8_t len){
-    EffectArgMan efar = {.effects = effects,.len = len,.pm = this,.loop=true};
+    efar = {.effects = effects,.len = len,.pm = this,.loop=true};
     xQueueSend(effectQueue,(void *)&efar,10);
+    Serial.println("sent");
 }
 
 void Partyman::stopLoop(){
@@ -95,7 +96,7 @@ void Partyman::stopLoop(){
 }
 
 void Partyman::runEffects(EffectWithArg effects[],uint8_t len){
-    EffectArgMan efar = {.effects = effects,.len = len,.pm = this,.loop=true};
+    efar = {.effects = effects,.len = len,.pm = this,.loop=true};
     xQueueSend(effectQueue,(void *)&efar,10);
 }
 
