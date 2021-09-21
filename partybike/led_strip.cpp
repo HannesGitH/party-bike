@@ -57,7 +57,7 @@ static void led_strip_fill_rmt_items_ws2812(irgb_t *led_strip_buf, rmt_item32_t 
     uint32_t rmt_items_index = 0;
     for (uint32_t led_index = 0; led_index < led_strip_length; led_index++) {
         irgb_t IRGB = led_strip_buf[led_index];
-        uint32_t led_colors = IRGB.r<<16 | IRGB.g<<8 | IRGB.b;
+        uint32_t led_colors = IRGB.g<<16 | IRGB.r<<8 | IRGB.b;
         for (uint8_t bit = 24; bit != 0; bit--) {
             uint8_t bit_set = (led_colors >> (bit - 1)) & 1;
             if(bit_set) {
