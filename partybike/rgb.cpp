@@ -14,12 +14,12 @@ irgb_t iRGB
         .r = R,
         .g = G,
         .b = B,
-        .i = 0
+        .i = 0xF0
     };
 }
 
-irgb_t black = {.r=0x00, .g=0x00, .b=0x00, .i=0x00};
-irgb_t white = {.r=0xFF, .g=0xFF, .b=0xFF, .i=0x00};
+irgb_t black = {.r=0x00, .g=0x00, .b=0x00, .i=0xF0};
+irgb_t white = {.r=0xFF, .g=0xFF, .b=0xFF, .i=0xF0};
 
 irgb_t fromarray(uint8_t v4[4]) {
     return {
@@ -35,7 +35,7 @@ irgb_t invert(irgb_t iRGB){
         .r = (iRGB.r ^ 0xFF) +1,
         .g = (iRGB.g ^ 0xFF) +1,
         .b = (iRGB.b ^ 0xFF) +1,
-        .i = (iRGB.i ^ 0xFF) +1
+        .i = iRGB.i
     };
 }
 
@@ -87,6 +87,7 @@ irgb_t change_hsv(
     out.r = clamp((in.r*matrix[0][0] + in.g*matrix[0][1] + in.b*matrix[0][2])*fVal);
     out.g = clamp((in.r*matrix[1][0] + in.g*matrix[1][1] + in.b*matrix[1][2])*fVal);
     out.b = clamp((in.r*matrix[2][0] + in.g*matrix[2][1] + in.b*matrix[2][2])*fVal);
+    out.i = in.i;
     return out;
 }
 

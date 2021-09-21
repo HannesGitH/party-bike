@@ -12,7 +12,7 @@ struct irgb_t
     uint8_t r;
     uint8_t g;
     uint8_t b;
-    uint8_t i;
+    uint8_t i; //left/right/centre first/second/third bit;  0xFF = end of custom; 0xFE = end of buffer; 0xFD = skip this  
     
     irgb_t& operator +(const irgb_t& a)
     {
@@ -22,6 +22,14 @@ struct irgb_t
         return *this;
     }
     irgb_t& operator +=(const irgb_t& a){return *this+a;}
+
+    irgb_t& operator *(const irgb_t& a)
+    {
+        r *= a.r;
+        g *= a.g;
+        b *= a.b;    
+        return *this;
+    }
 };
 
 extern irgb_t black;

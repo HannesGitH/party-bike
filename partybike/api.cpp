@@ -19,6 +19,7 @@ void Api::run(){
   if (SerialBT.available()) {
     String command = SerialBT.readString();
     command = command.substring(0,command.length()-2);
+    const char * ccommand = command.c_str();
     
     if(command == PASS){
         locked = false;
@@ -35,6 +36,7 @@ void Api::run(){
     else if (command.substring(0,4) == "loop"       ) effectsrun(command.substring(5),true);
     else if (command                == "test"       ) pm.test();
     else if (command                == "reset"      ) pm.reset();
+    else if (command                == "speed"      ) pm.speed==strtol(ccommand+6,((char **)&ccommand)+command.length(),10); //TODO test
 
     else SerialBT.printf("\"%s\" not supported\n",command);
   }
@@ -66,6 +68,7 @@ void Api::sendBuffer(irgb_t * buffer){
 
 #include <map>
 #include "effects.hpp"
+#include "math.hpp"
 
 void Api::effectsrun(String effectstr, bool loop){
   free(effects_to_run);//maybe a realloc would be better?
@@ -83,6 +86,11 @@ void Api::effectsrun(String effectstr, bool loop){
     else if(c=='S'){effects_to_run[i]={.eff = effect_streetlight       , .arg = NULL }; }
     else if(c=='r'){effects_to_run[i]={.eff = effect_init_rainbow      , .arg = NULL }; }
     else if(c=='h'){effects_to_run[i]={.eff = effect_change_hue        , .arg = NULL }; }
+
+    //blinking
+    else if(c=='a'){effects_to_run[i]={.eff = effect_blink             , .arg = NULL }; }
+    else if(c=='d'){effects_to_run[i]={.eff = effect_blink             , .arg = (void*)&tru }; }
+
     else{failed++;}
     i++;
   }

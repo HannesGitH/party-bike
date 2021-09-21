@@ -7,7 +7,8 @@
 uint32_t ggT(uint32_t a, uint32_t b);
 uint32_t kgV(uint32_t a, uint32_t b);
 
-
+const bool tru = true;
+const bool fals = false;
 
 
 

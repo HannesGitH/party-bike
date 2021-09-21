@@ -26,6 +26,7 @@ extern Effect effect_streetlight;
 extern Effect effect_init_rainbow;
 extern Effect effect_change_hue;
 extern Effect effect_set_color;
+extern Effect effect_blink;
 
 //Effect effect_possibilities[6]; //TODO make the effects iterateable?
 

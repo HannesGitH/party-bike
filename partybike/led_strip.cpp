@@ -217,13 +217,14 @@ bool led_strip_get_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num
     return get_success;
 }
 
-bool led_strip_addto_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num, irgb_t color)
+bool led_strip_aset_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num, irgb_t color, bool add)
 {
     irgb_t current_color;
     if (led_strip_get_pixel_color(led_strip,pixel_num,&current_color))
     {   
         ////Serial.printf("coloring %d\t%d with \t {r: %d g:%d b: %d}\t+\t{r: %d g:%d b: %d}\t=\t{r: %d g:%d b: %d}\n", led_strip ,pixel_num, current_color.r, current_color.g, current_color.b, color.r,  color.g,  color.b,(color+current_color).r, (color+current_color).g, (color+current_color).b);
-        return led_strip_set_pixel_color(led_strip,pixel_num,color+current_color);
+        if(add) return led_strip_set_pixel_color(led_strip,pixel_num,color+current_color);
+        else    return led_strip_set_pixel_color(led_strip,pixel_num,color              );
     }
     return false;
 }

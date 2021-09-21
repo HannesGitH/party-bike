@@ -54,7 +54,7 @@ bool led_strip_set_pixel_rgb(struct led_strip_t *led_strip, uint32_t pixel_num, 
  */
 bool led_strip_get_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num, irgb_t *color);
 
-bool led_strip_addto_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num, irgb_t color);
+bool led_strip_aset_pixel_color(struct led_strip_t *led_strip, uint32_t pixel_num, irgb_t color, bool add);
 
 /**
  * Clears the LED strip.
