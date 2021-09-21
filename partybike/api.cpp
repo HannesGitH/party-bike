@@ -36,7 +36,7 @@ void Api::run(){
     else if (command.substring(0,4) == "loop"       ) effectsrun(command.substring(5),true);
     else if (command                == "test"       ) pm.test();
     else if (command                == "reset"      ) pm.reset();
-    else if (command                == "speed"      ) pm.speed==strtol(ccommand+6,((char **)&ccommand)+command.length(),10); //TODO test
+    else if (command.substring(0,5) == "speed"      ) pm.speed==strtol(ccommand+6,((char **)&ccommand)+command.length(),10); //TODO test
 
     else SerialBT.printf("\"%s\" not supported\n",command);
   }

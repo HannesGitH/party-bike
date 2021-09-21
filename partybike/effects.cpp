@@ -72,7 +72,7 @@ void draw_iterated_pixel(led_strip_t * strips, uint32_t step, void* extra_args_p
         //diag_l
         if(isLeft)      led_strip_aset_pixel_color(strips+DIAG,LENGTH_DIAG_R+step2-1,walking_color,add);
         //frnt
-        if(isCenter)    led_strip_aset_pixel_color(strips+FRNT,step2+3,walking_color,add);
+        if(isCenter)    led_strip_aset_pixel_color(strips+FRNT,step2-1,walking_color,add);
     }  
     
     if (LENGTH_MAIN_L+LENGTH_DIAG_L<step&&step<LENGTH_MAIN_L+LENGTH_DIAG_L+LENGTH_SDDL)

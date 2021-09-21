@@ -17,7 +17,8 @@ int bufferOffset(uint16_t stripnum){
 struct EffectArgMan{
     EffectWithArg * effects;
     uint8_t len;
-    uint8_t loop;
+    bool loop;
+    bool run_all_in_every_step;
     Partyman * pm;
 };
 
@@ -35,7 +36,7 @@ void effectLoop(void * arg){
         if(uxQueueMessagesWaiting(effectQueue)){
             Serial.println("received a new effect");
             configASSERT(effectQueue);
-            configASSERT( &efar != NULL ) ;
+            //configASSERT( &efar != NULL ) ;
             //configASSERT(effectQueue->uxItemSize != 0U );
             xQueueReceive(effectQueue,&efar,10); //// queue.c:1443 (xQueueGenericReceive)- assert failed!
             ranOnce = false;
@@ -53,7 +54,7 @@ void effectLoop(void * arg){
             args[i]=efar.effects[i].arg;
         }       
 
-        efar.pm->driveEffects(effs,efar.len,args,false); 
+        efar.pm->driveEffects(effs,efar.len,args,efar.run_all_in_every_step); 
         ranOnce = true;
     }
 }
@@ -67,18 +68,18 @@ Partyman::Partyman()
 
     speed=20;
     
-    //effectQueue = xQueueCreate(5,sizeof(EffectWithArg));
     xTaskCreate(effectLoop,"effectLoop",2048,NULL,1,&loopHandle);//idk if this works or somehow weirds out because class members..
 
     Serial.println("partymaaaan");
-    
-    // drive_effect(strips,50,effect_init_rainbow);
-    // drive_effect(strips,30,effect_change_hue);
-    
-    //void ** extra_effect_args = (void**) malloc(sizeof(void*)*10);
-    struct Effect inits[] = {effect_init_rainbow, effect_walk_pixel}; 
-    driveEffects(inits,2,NULL,false);
-    drive_effect(strips,50,effect_set_color,&black);
+
+    EffectWithArg inits[] = {{.eff=effect_change_hue}, {.eff=effect_streetlight}}; 
+    EffectWithArg rainbow[] = {{.eff = effect_init_rainbow},{.eff = effect_init_rainbow}};
+
+    vTaskDelay(50/portTICK_PERIOD_MS);
+
+    //TODO
+    //runEffects(rainbow,2);
+    //loopEffects(inits,2);
     //test();
     return;
 }
@@ -90,7 +91,7 @@ Partyman::~Partyman()
 }
 
 void Partyman::loopEffects(EffectWithArg effects[],uint8_t len){
-    efar = {.effects = effects, .len = len, .loop=true, .pm = this};
+    efar = {.effects = effects, .len = len, .loop=true, .run_all_in_every_step=true, .pm = this}; //todo make run all in everystep configureable
     xQueueSend(effectQueue,(void *)&efar,10);
 }
 
@@ -99,7 +100,7 @@ void Partyman::stopLoop(){
 }
 
 void Partyman::runEffects(EffectWithArg effects[],uint8_t len){
-    efar = {.effects = effects, .len = len, .loop=false, .pm = this};
+    efar = {.effects = effects, .len = len, .loop=false, .run_all_in_every_step=true, .pm = this}; //todo make run all in everystep configureable
     xQueueSend(effectQueue,(void *)&efar,10);
 }
 
