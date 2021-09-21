@@ -17,8 +17,8 @@ int bufferOffset(uint16_t stripnum){
 struct EffectArgMan{
     EffectWithArg * effects;
     uint8_t len;
+    uint8_t loop;
     Partyman * pm;
-    bool loop;
 };
 
 EffectArgMan efar;
@@ -34,12 +34,16 @@ void effectLoop(void * arg){
         vTaskDelay(50/portTICK_PERIOD_MS);
         if(uxQueueMessagesWaiting(effectQueue)){
             Serial.println("received a new effect");
-            xQueueReceive(effectQueue,&efar,10); //TODO: queue.c:1443 (xQueueGenericReceive)- assert failed!
+            configASSERT(effectQueue);
+            configASSERT( &efar != NULL ) ;
+            //configASSERT(effectQueue->uxItemSize != 0U );
+            xQueueReceive(effectQueue,&efar,10); //// queue.c:1443 (xQueueGenericReceive)- assert failed!
             ranOnce = false;
         }
-        if(efar.len == NULL)continue;      //nothing received yet
-        if (efar.len == 0)continue;        //no effects
-        if(ranOnce && !efar.loop)continue; //not looping and we already ran the effects
+        
+        if(efar.len == NULL)continue;           //nothing received yet
+        if (efar.len == 0)continue;             //no effects
+        if(ranOnce && !(efar.loop))continue;    //not looping and we already ran the effects
 
         Effect effs[efar.len];
         void *args[efar.len];
@@ -86,9 +90,8 @@ Partyman::~Partyman()
 }
 
 void Partyman::loopEffects(EffectWithArg effects[],uint8_t len){
-    efar = {.effects = effects,.len = len,.pm = this,.loop=true};
+    efar = {.effects = effects, .len = len, .loop=true, .pm = this};
     xQueueSend(effectQueue,(void *)&efar,10);
-    Serial.println("sent");
 }
 
 void Partyman::stopLoop(){
@@ -96,7 +99,7 @@ void Partyman::stopLoop(){
 }
 
 void Partyman::runEffects(EffectWithArg effects[],uint8_t len){
-    efar = {.effects = effects,.len = len,.pm = this,.loop=true};
+    efar = {.effects = effects, .len = len, .loop=false, .pm = this};
     xQueueSend(effectQueue,(void *)&efar,10);
 }
 

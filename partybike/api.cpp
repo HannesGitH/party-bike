@@ -77,6 +77,7 @@ void Api::effectsrun(String effectstr, bool loop){
     Serial.println(c);
     if(false){}
     else if(c=='w'){effects_to_run[i]={.eff = effect_walk_pixel        , .arg = NULL }; }
+    else if(c=='b'){effects_to_run[i]={.eff = effect_set_color         , .arg = NULL }; }
     ////else if(c=='s'){effects_to_run[i]={.eff = effect_spread_pixel      , .arg = NULL }; }
     else if(c=='W'){effects_to_run[i]={.eff = effect_walking_colorline , .arg = NULL }; }
     else if(c=='S'){effects_to_run[i]={.eff = effect_streetlight       , .arg = NULL }; }
